@@ -34,7 +34,7 @@ const OnBoardScreen = ({ navigation }) => {
           </Text>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => navigation.navigate("MainScreen")}
+            onPress={() => navigation.navigate("GettingStartedScreen")}
           >
             <View style={style.btn}>
               <Text style={{ fontWeight: "bold" }}>Get Started</Text>
