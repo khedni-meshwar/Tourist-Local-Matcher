@@ -29,12 +29,6 @@ const SocialSignInButtons = () => {
         bgColor="#FAE9EA"
         fgColor="#DD4D44"
       />
-      <CustomButton
-        text="Sign In with Apple"
-        onPress={onSignInApple}
-        bgColor="#e3e3e3"
-        fgColor="#363636"
-      />
     </>
   );
 };
