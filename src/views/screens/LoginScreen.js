@@ -8,7 +8,6 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
-  KeyboardAvoidingView,
 } from "react-native";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
@@ -31,6 +30,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onForgotPasswordPressed = () => {};
+  
   const auth = getAuth();
   const onLoginPressed = () => {
     signInWithEmailAndPassword(auth, email, password)
@@ -41,7 +41,8 @@ export default function LoginScreen({ navigation }) {
           duration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
         });
-        navigation.navigate("MainScreen");
+        // navigation.navigate("MainScreen");
+        navigation.navigate("CreateProfileScreen");
       })
       .catch((error) => {
         console.log(error.message);
