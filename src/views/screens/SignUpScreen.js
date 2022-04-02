@@ -12,36 +12,37 @@ import {
 } from "react-native";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
-import SocialSignInButtons from "../components/SocialSignInButtons";
 import COLORS from "../../consts/colors";
 import auth from "../../../firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import Toast from "react-native-root-toast";
+
 
 const { width } = Dimensions.get("screen");
 
-export default function LoginScreen({ navigation }) {
+export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const { height } = useWindowDimensions();
 
-  const onSignUpPressed = () => {
-    navigation.navigate("SignUpScreen");
+  const onLoginPressed = () => {
+    navigation.navigate("LoginScreen");
   };
 
   const onForgotPasswordPressed = () => {};
   const auth = getAuth();
-  const onLoginPressed = () => {
-    signInWithEmailAndPassword(auth, email, password)
+  const onSignUpPressed = () => {
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log("Logged in with: ", user.email);
-        let toast = Toast.show("Successfully logged in.", {
+        console.log("Signed up with: ", user.email);
+        let toast = Toast.show("Successfully signed up.", {
           duration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
         });
-        navigation.navigate("MainScreen");
+        navigation.navigate("LoginScreen");
       })
       .catch((error) => {
         console.log(error.message);
@@ -53,14 +54,15 @@ export default function LoginScreen({ navigation }) {
       <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
         <ImageBackground
           style={{ height: Dimensions.get("window").height / 2.5 }}
-          source={require("../../assets/loginimage.png")}
+          source={require("../../assets/signupimage.png")}
         ></ImageBackground>
+
         <View style={styles.bottomView}>
           <View style={styles.root}>
-            <Text style={styles.headerTitle}>Log in</Text>
+            <Text style={styles.headerTitle}>Sign up</Text>
             <CustomButton
-              text="Don't have an account? Create one"
-              onPress={onSignUpPressed}
+              text="Already have an account? Sign in"
+              onPress={onLoginPressed}
               type="TERTIARY"
             />
 
@@ -75,14 +77,13 @@ export default function LoginScreen({ navigation }) {
               setValue={setPassword}
               secureTextEntry
             />
-            <CustomButton text="Sign In" onPress={onLoginPressed} />
-            <CustomButton
-              text="Forgot password?"
-              onPress={onForgotPasswordPressed}
-              type="TERTIARY"
-              style={{ alignItems: "right" }}
+            <CustomInput
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              setValue={setConfirmPassword}
+              secureTextEntry
             />
-            <SocialSignInButtons />
+            <CustomButton text="Sign Up" onPress={onSignUpPressed} />
           </View>
         </View>
       </ScrollView>
