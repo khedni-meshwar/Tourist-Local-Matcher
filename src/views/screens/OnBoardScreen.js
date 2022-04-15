@@ -15,7 +15,7 @@ const OnBoardScreen = ({ navigation }) => {
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
       <ImageBackground
         style={{ flex: 1 }}
-        source={require("../../assets/onboardImage.jpg")}
+        source={require("../../assets/onboardImage4.jpg")}
       >
         <View style={style.details}>
           <Text
@@ -26,11 +26,10 @@ const OnBoardScreen = ({ navigation }) => {
           <Text
             style={{ color: COLORS.white, fontSize: 35, fontWeight: "bold" }}
           >
-            world with us
+            Lebanon with us
           </Text>
           <Text style={{ color: COLORS.white, lineHeight: 25, marginTop: 15 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ut
-            sem non erat vehicula dignissim. Morbi eget congue ante, feugiat.
+            Meet new people, discover hidden gems, and get to know Lebanon on a deeper level.
           </Text>
           <TouchableOpacity
             activeOpacity={0.8}
