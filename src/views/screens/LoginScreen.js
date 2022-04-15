@@ -22,6 +22,8 @@ const { width } = Dimensions.get("screen");
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const { height } = useWindowDimensions();
 
@@ -30,23 +32,49 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onForgotPasswordPressed = () => {};
-  
+
   const auth = getAuth();
   const onLoginPressed = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log("Logged in with: ", user.email);
-        let toast = Toast.show("Successfully logged in.", {
-          duration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
+    var emailValid = false;
+    if (email.length == 0) {
+      setEmailError("Email is required");
+    } else if (email.length < 6) {
+      setEmailError("Email should be minimum 6 characters");
+    } else if (email.indexOf(" ") >= 0) {
+      setEmailError("Email cannot contain spaces");
+    } else {
+      setEmailError("");
+      emailValid = true;
+    }
+
+    var passwordValid = false;
+    if (password.length == 0) {
+      setPasswordError("Password is required");
+    } else if (password.length < 6) {
+      setPasswordError("Password should be minimum 6 characters");
+    } else if (password.indexOf(" ") >= 0) {
+      setPasswordError("Password cannot contain spaces");
+    } else {
+      setPasswordError("");
+      passwordValid = true;
+    }
+
+    if (emailValid && passwordValid) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          console.log("Logged in with: ", user.email);
+          let toast = Toast.show("Successfully logged in.", {
+            duration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+          });
+          // navigation.navigate("MainScreen");
+          navigation.navigate("CreateProfileScreen");
+        })
+        .catch((error) => {
+          setPasswordError("Email or password is invalid.");
         });
-      // navigation.navigate("MainScreen");
-      navigation.navigate("CreateProfileScreen");
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    }
   };
 
   return (
@@ -70,12 +98,14 @@ export default function LoginScreen({ navigation }) {
               value={email}
               setValue={setEmail}
             />
+            {emailError.length > 0 && <Text style={styles.error}>{emailError}</Text>}
             <CustomInput
               placeholder="Password"
               value={password}
               setValue={setPassword}
               secureTextEntry
             />
+            {passwordError.length > 0 && <Text style={styles.error}>{passwordError}</Text>}
             <CustomButton text="Sign In" onPress={onLoginPressed} />
             <CustomButton
               text="Forgot password?"
@@ -127,5 +157,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: COLORS.white,
     flex: 0.3,
+  },
+  error: {
+    textAlign: "right",
+    color: "#DD4D44",
   },
 });
