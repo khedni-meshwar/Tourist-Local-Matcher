@@ -15,7 +15,7 @@ const DetailsScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
-      <ImageBackground style={{ flex: 0.7 }} source={place.image}>
+      <ImageBackground style={{ flex: 0.7 }} source={{ uri: place.mainPhoto }}>
         <View style={style.header}>
           <Icon
             name="arrow-back-ios"
@@ -42,7 +42,7 @@ const DetailsScreen = ({ navigation, route }) => {
             <Text
               style={{ color: COLORS.white, fontWeight: "bold", fontSize: 20 }}
             >
-              5.0
+              {place.averageRating}
             </Text>
           </View>
         </View>
@@ -64,41 +64,12 @@ const DetailsScreen = ({ navigation, route }) => {
             {place.location}
           </Text>
         </View>
-        <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 20 }}>
+        <Text style={{ marginTop: 10, fontWeight: "bold", fontSize: 20 }}>
           About the trip
         </Text>
-        <Text style={{ marginTop: 20, lineHeight: 22 }}>{place.details}</Text>
+        <Text style={{ marginTop: 10, lineHeight: 22, fontSize:15 }}>{place.description}</Text>
       </View>
-      <View style={style.footer}>
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              color: COLORS.white,
-            }}
-          >
-            $100
-          </Text>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: "bold",
-              color: COLORS.grey,
-              marginLeft: 2,
-            }}
-          >
-            /PER DAY
-          </Text>
-        </View>
-        <View style={style.bookNowBtn}>
-          <Text
-            style={{ color: COLORS.primary, fontSize: 16, fontWeight: "bold" }}
-          >
-            Book Now
-          </Text>
-        </View>
-      </View>
+      
     </SafeAreaView>
   );
 };
