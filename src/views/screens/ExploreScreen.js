@@ -15,6 +15,8 @@ import {
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import COLORS from "../../consts/colors";
 import app from "../../../firebase";
 // import places from '../../consts/places';
@@ -57,10 +59,10 @@ const ExploreScreen = ({ navigation }) => {
   }, []); 
 
   const categoryIcons = [
-    <Icon name="flight" size={25} color={COLORS.primary} />,
-    <Icon name="beach-access" size={25} color={COLORS.primary} />,
-    <Icon name="near-me" size={25} color={COLORS.primary} />,
-    <Icon name="place" size={25} color={COLORS.primary} />,
+    <FontAwesome5 name="umbrella-beach" size={25} color={COLORS.primary} />,
+    <FontAwesome name="tree" size={25} color={COLORS.primary} />,
+    <FontAwesome name="cutlery" size={25} color={COLORS.primary} />,
+    <FontAwesome name="glass" size={25} color={COLORS.primary} />,
   ];
   const ListCategories = () => {
     return (
