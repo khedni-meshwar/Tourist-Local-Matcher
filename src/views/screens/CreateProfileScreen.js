@@ -15,7 +15,14 @@ const { width, height } = Dimensions.get("window");
 
 import COLORS from "../../consts/colors";
 import CustomInput from "../components/CustomInput";
+import CustomButton from "../components/CustomButton"
 import Carousel from "pinar";
+import { doc, addDoc, collection, Timestamp } from "firebase/firestore"; 
+// import db from "../../../firebase";
+import { getFirestore } from "firebase/firestore";
+
+const db = getFirestore();
+
 
 const CreateProfileScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -33,6 +40,25 @@ const CreateProfileScreen = ({ navigation }) => {
       carousel.scrollToPrev();
     }
   };
+
+  const insertUserToDB = () => {
+    const docData = {
+    stringExample: "Hello!",
+    booleanExample: true,
+    numberExample: 3.14159265,
+    dateExample: Timestamp.fromDate(new Date("December 10, 1815")),
+    arrayExample: [5, true, "hello"],
+    nullExample: null,
+    objectExample: {
+        a: 5,
+        b: {
+            nested: "foo"
+        }
+    }
+  };
+  addDoc(collection(db, "users"), docData);
+
+  }
 
   return (
     <View style={styles.rootView}>
@@ -62,6 +88,7 @@ const CreateProfileScreen = ({ navigation }) => {
               value={lastName}
               setValue={setLastName}
             />
+            <CustomButton text= "Test DB" onPress={insertUserToDB}/>
           </SafeAreaView>
         </View>
         <View style={styles.root}>

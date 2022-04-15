@@ -8,6 +8,7 @@ import LoginScreen from "./src/views/screens/LoginScreen";
 import SignUpScreen from "./src/views/screens/SignUpScreen";
 import GettingStartedScreen from "./src/views/screens/GettingStartedScreen";
 import CreateProfileScreen from "./src/views/screens/CreateProfileScreen";
+import DetailsScreen from "./src/views/screens/DetailsScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
 
 const Stack = createStackNavigator();
@@ -26,6 +27,7 @@ const App = () => {
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
             <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
             <Stack.Screen name="MainScreen" component={MainScreen} />
+            <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
             <Stack.Screen name="CreateProfileScreen" component={CreateProfileScreen} />
           </Stack.Navigator>
         }
