@@ -11,7 +11,6 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,6 +25,11 @@ import
 Modal from "react-native-modal-datetime-picker";
 import CountryPicker from 'react-native-country-picker-modal';
 import DateTimePicker from "react-native-modal-datetime-picker";
+import ImageUpload from "../components/ImageUpload";
+import ImagePickerExample from "../components/ImagePickerExample";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import interests from "../../../interests";
+
 
 const db = getFirestore();
 
@@ -38,8 +42,12 @@ const CreateProfileScreen = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState('LB');
   const [callingCode, setCallingCode] = useState('961');
   const [infoValid, setInfoValid] = useState(false);
+  const [bio, setBio] = useState("");
+  const [colorBorder, setColorBorder] = useState("gray");
+  const [isSelected, setSelection]=useState(false);
 
   const [image, setImg]=useState();
+  const [data, setData]=useState([]);
 
 
 
@@ -64,7 +72,6 @@ const CreateProfileScreen = ({ navigation }) => {
       if(carousel !== null){
         carousel.scrollToNext();
       }
-    // }
   };
 
   const goToPrevSlide = () => {
@@ -105,6 +112,16 @@ const CreateProfileScreen = ({ navigation }) => {
     hide
     ();
   };
+
+
+  const renderInterests = (interest) => {
+      return (
+        <View  key={interest.id} style={{display: "flex", flexDirection: "row", padding: 10, flex:10}}>
+          <BouncyCheckbox  fillColor={COLORS.primary} onPress={(isChecked) => {console.log("HIIII")}} />
+          <Text>{interest.name}</Text>
+        </View>
+        );
+  }
 
   return (
     <View style={styles.rootView}>
@@ -192,7 +209,15 @@ const CreateProfileScreen = ({ navigation }) => {
               Help others know more about you by adding a bio and profile
               picture. You can always skip and come back later.
             </Text>
-            <CustomInput placeholder="Insert Bio..."/>
+            <ImagePickerExample />
+            <TextInput
+              style={{borderColor:colorBorder, borderWidth: 2.0, minWidth: "100%", borderRadius: 20, display: "flex", textAlign:"left"}}
+              placeholder="Insert Bio..."
+              multiline={true}
+              numberOfLines={7}
+              onChangeText={(text) => setBio(text)}
+              value={bio}
+              />
             <CustomButton text = "Next" onPress={goToNextSlide}/>
           </SafeAreaView>
         </View>
@@ -202,6 +227,7 @@ const CreateProfileScreen = ({ navigation }) => {
             <Text style={styles.subtitle}>
               Choose between 3 to 5 interests for optimal recommendations.
             </Text>
+            {interests.map(renderInterests)}
             <CustomButton text = "Finish" onPress={() => navigation.navigate("MainScreen")}/>
           </SafeAreaView>
         </View>
