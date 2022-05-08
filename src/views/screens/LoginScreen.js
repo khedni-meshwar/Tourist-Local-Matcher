@@ -68,8 +68,8 @@ export default function LoginScreen({ navigation }) {
             duration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
           });
-          // navigation.navigate("MainScreen");
-          navigation.navigate("CreateProfileScreen");
+          navigation.navigate("MainScreen");
+          // navigation.navigate("CreateProfileScreen");
         })
         .catch((error) => {
           setPasswordError("Email or password is invalid.");
