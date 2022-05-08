@@ -21,14 +21,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "100%",
     height: 40,
+    justifyContent: "center",
     borderColor: "#e8e8e8",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 5,
-    fontSize:20
+    fontSize: 20,
   },
-  input: {},
 });
 
 export default CustomInput;

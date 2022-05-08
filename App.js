@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import React from "react";
+import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import OnBoardScreen from "./src/views/screens/OnBoardScreen";
@@ -11,26 +12,23 @@ import CreateProfileScreen from "./src/views/screens/CreateProfileScreen";
 import DetailsScreen from "./src/views/screens/DetailsScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
 
+LogBox.ignoreAllLogs();
+
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <RootSiblingParent>
       <NavigationContainer>
-        {
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
-            <Stack.Screen
-              name="GettingStartedScreen"
-              component={GettingStartedScreen}
-            />
-            <Stack.Screen name="LoginScreen" component={LoginScreen} />
-            <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-            <Stack.Screen name="MainScreen" component={MainScreen} />
-            <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
-            <Stack.Screen name="CreateProfileScreen" component={CreateProfileScreen} />
-          </Stack.Navigator>
-        }
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
+          <Stack.Screen name="GettingStartedScreen" component={GettingStartedScreen} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+          <Stack.Screen name="MainScreen" component={MainScreen} />
+          <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+          <Stack.Screen name="CreateProfileScreen" component={CreateProfileScreen} />
+        </Stack.Navigator>
       </NavigationContainer>
     </RootSiblingParent>
   );

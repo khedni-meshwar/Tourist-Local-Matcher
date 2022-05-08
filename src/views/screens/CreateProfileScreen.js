@@ -1,127 +1,111 @@
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  Image,
-  StyleSheet,
-  FlatList,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  Dimensions,
-  TextInput,
-} from "react-native";
-
-const { width, height } = Dimensions.get("window");
-
+import { StyleSheet, View, Text, StatusBar, Dimensions, TextInput, TouchableOpacity, Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import COLORS from "../../consts/colors";
-import CustomInput from "../components/CustomInput";
-import CustomButton from "../components/CustomButton"
+import CustomButton from "../components/CustomButton";
 import Carousel from "pinar";
-import { doc, addDoc, collection, Timestamp } from "firebase/firestore"; 
-// import db from "../../../firebase";
+import { doc, addDoc, collection, Timestamp } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
-import 
-Modal from "react-native-modal-datetime-picker";
-import CountryPicker from 'react-native-country-picker-modal';
-import DateTimePicker from "react-native-modal-datetime-picker";
-import ImageUpload from "../components/ImageUpload";
-import ImagePickerExample from "../components/ImagePickerExample";
+import CountryPicker from "react-native-country-picker-modal";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import interests from "../../../interests";
-
+import values from "../../consts/values";
+import { Platform } from "expo-modules-core";
 
 const db = getFirestore();
 
-
 const CreateProfileScreen = ({ navigation }) => {
+  const [carousel, setCarousel] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [carousel, setCarousel] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const [countryCode, setCountryCode] = useState('LB');
-  const [callingCode, setCallingCode] = useState('961');
-  const [infoValid, setInfoValid] = useState(false);
+  const [dob, setDOB] = useState(null);
+  const [dobModalVisible, setDOBModalVisible] = useState(false);
+  const [countryCode, setCountryCode] = useState("LB");
+  const [callingCode, setCallingCode] = useState("961");
   const [bio, setBio] = useState("");
-  const [colorBorder, setColorBorder] = useState("gray");
-  const [isSelected, setSelection]=useState(false);
-
-  const [image, setImg]=useState();
-  const [data, setData]=useState([]);
-
-
-
-  
-  const onSelect = (country) => {
-    console.log('country', country);
-    const {cca2, callingCode} = country;
-    setCountryCode(cca2);
-    setCallingCode(callingCode[0]);
-  }
-
-  const selectCountry = (val) => {
-    setState({country: val});
-  }
-  
-  const selectRegion = (val) => {
-    setState({region: val});
-  }
+  const [image, setImage] = useState(null);
+  const [interests, setInterests] = useState([]);
 
   const goToNextSlide = () => {
-    // if (carousel !== null && firstName != '' && lastName != '') {
-      if(carousel !== null){
-        carousel.scrollToNext();
-      }
+    if (carousel) carousel.scrollToNext();
   };
 
   const goToPrevSlide = () => {
-    if (carousel !== null) {
-      carousel.scrollToPrev();
-    }
+    if (carousel) carousel.scrollToPrev();
+  };
+
+  const createAccountObject = () => {
+    let account = {
+      firstName,
+      lastName,
+      dob,
+      bio,
+      image, // here its still a local uri path, you can use expo FileSystem or MediaLibary to do get an image out of it or array buffer or whatever
+      interests: interests.map((interest) => interest.name),
+    };
+
+    console.log(account);
+
+    navigation.navigate("MainScreen");
   };
 
   const insertUserToDB = () => {
     const docData = {
-    stringExample: "Hello!",
-    booleanExample: true,
-    numberExample: 3.14159265,
-    dateExample: Timestamp.fromDate(new Date("December 10, 1815")),
-    arrayExample: [5, true, "hello"],
-    nullExample: null,
-    objectExample: {
+      stringExample: "Hello!",
+      booleanExample: true,
+      numberExample: 3.14159265,
+      dateExample: Timestamp.fromDate(new Date("December 10, 1815")),
+      arrayExample: [5, true, "hello"],
+      nullExample: null,
+      objectExample: {
         a: 5,
         b: {
-            nested: "foo"
-        }
-    }
+          nested: "foo",
+        },
+      },
+    };
+    addDoc(collection(db, "users"), docData);
   };
-  addDoc(collection(db, "users"), docData);
-
-  }
-
-  const showDatePicker = () => {
-    setVisible(true);
-  };
- 
-  const hideDatePicker = () => {
-    setVisible(false);
-  };
- 
-  const handleDatePicked = date => {
-    console.log("A date has been picked: ", date);
-    hide
-    ();
-  };
-
 
   const renderInterests = (interest) => {
-      return (
-        <View  key={interest.id} style={{display: "flex", flexDirection: "row", padding: 10, flex:10}}>
-          <BouncyCheckbox  fillColor={COLORS.primary} onPress={(isChecked) => {console.log("HIIII")}} />
-          <Text>{interest.name}</Text>
-        </View>
-        );
-  }
+    return (
+      <View key={interest.id} style={{ display: "flex", flexDirection: "row", padding: 5, alignItems: "center" }}>
+        <BouncyCheckbox
+          fillColor={COLORS.primary}
+          onPress={(isChecked) => {
+            if (isChecked) {
+              interests.push(interest);
+            } else {
+              interests.splice(
+                interests.findIndex((i) => i.id === interest.id),
+                1
+              );
+            }
+            setInterests(interests);
+          }}
+        />
+        <Text style={{ fontWeight: "300", color: COLORS.primaryAlternate }}>{interest.name}</Text>
+      </View>
+    );
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
+
+  const onSelectCountry = (country) => {
+    const { cca2, callingCode } = country;
+    setCountryCode(cca2);
+    setCallingCode(callingCode[0]);
+  };
 
   return (
     <View style={styles.rootView}>
@@ -134,102 +118,144 @@ const CreateProfileScreen = ({ navigation }) => {
         }}
       >
         <View style={styles.root}>
-          <SafeAreaView style={styles.safeRoot}>
+          <View style={{ flex: 4 }}>
             <View style={styles.header}>
-              <Text>Let's create your profile...</Text>
-              <Text style={styles.headerTitle}>What should we call you?</Text>
+              <Text style={styles.normalText}>Let's create your profile...</Text>
+              <Text style={[styles.headerTitle, { marginBottom: 10 }]}>What should we call you?</Text>
+              <Text style={styles.subtitle}>Your name will be shown to other users on the app</Text>
             </View>
-            <View style={{marginBottom: 100}}>
-              <Text style={styles.subtitle}>
-                Your name will be shown to other users on the app.
-              </Text>
+            <View style={{ marginBottom: 20 }}>
               <Text style={styles.inputDesc}>First Name</Text>
               <TextInput
                 style={styles.textInput}
-                placeholder="First Name"
+                placeholder="e.g: John"
                 onChangeText={(val) => setFirstName(val)}
+                placeholderTextColor={COLORS.secondaryAlternate}
               />
               <Text style={styles.inputDesc}>Last Name</Text>
               <TextInput
                 style={styles.textInput}
-                placeholder="Last Name"
+                placeholder="e.g: Smith"
                 onChangeText={(val) => setLastName(val)}
+                placeholderTextColor={COLORS.secondaryAlternate}
               />
             </View>
-            {/* <CustomButton text= "Test DB" onPress={insertUserToDB}/> */}
-            <CustomButton text = "Next" onPress={goToNextSlide} />
-          </SafeAreaView>
+          </View>
+          <CustomButton text="Next" onPress={goToNextSlide} />
         </View>
+
         <View style={styles.root}>
-          <SafeAreaView style={styles.safeRoot}>
+          <View style={{ flex: 4, width: "100%" }}>
             <Text style={styles.headerTitle}>When were you born?</Text>
-            <Text style={styles.subtitle}>
-              This information is kept private but will be used to match you
-              with others.
+            <Text style={[styles.subtitle, { marginBottom: 10 }]}>
+              This information is kept private but will be used to match you with others.
             </Text>
-            <CustomButton text="Show DatePicker" onPress={showDatePicker} />
-            <DateTimePicker
-              isVisible={visible}
-              onConfirm={handleDatePicked}
-              onCancel={hideDatePicker}
-        />
-        <Text style={{marginBottom: 265}}/>
-          <CustomButton text = "Next" onPress={goToNextSlide} />
-          </SafeAreaView>
+            {Platform.OS === "ios" ? (
+              <DateTimePicker
+                display="default"
+                style={{ width: "70%" }}
+                value={dob ?? new Date()}
+                onChange={(_event, date) => setDOB(new Date(date))}
+              />
+            ) : (
+              <CustomButton
+                text={dob ? dob.toDateString() : "Date Of Birth"}
+                onPress={() => setDOBModalVisible(true)}
+              />
+            )}
+            {dobModalVisible && (
+              <DateTimePicker
+                value={dob ?? new Date()}
+                mode="calendar"
+                display="default"
+                onChange={(event, date) => {
+                  if (event.type == "set") setDOB(date);
+                  else setDOBModalVisible(false);
+                }}
+              />
+            )}
+          </View>
+          <CustomButton text="Next" onPress={goToNextSlide} />
         </View>
+
         <View style={styles.root}>
-          <SafeAreaView style={styles.safeRoot}>
+          <View style={{ flex: 4, width: "100%" }}>
             <Text style={styles.headerTitle}>Where are you from?</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.subtitle, { marginBottom: 20 }]}>
               Your location helps us direct you to the right places.
             </Text>
-            <CountryPicker
-              style={{justifyContent: 'center'}}
-              withFilter
-              countryCode={countryCode}
-              withFlag
-              withCountryNameButton
-              withAlphaFilter={false}
-              withCurrencyButton={false}
-              onSelect={onSelect}
-              containerButtonStyle={{
-                alignItems: 'center',
-                marginLeft: 100,
-                marginBottom: 100
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: COLORS.secondary,
+                paddingHorizontal: 15,
+                paddingVertical: 5,
+                borderRadius: 5,
+                justifyContent: "center",
               }}
-            />
-            <Text style={[styles.instructions, {marginBottom: 200}]}>Press on the flag to select a country</Text>
-            <CustomButton text = "Next" onPress={goToNextSlide}/>
-          </SafeAreaView>
+            >
+              <CountryPicker
+                withFilter
+                countryCode={countryCode}
+                withFlag
+                withCountryNameButton
+                withAlphaFilter={false}
+                withCurrencyButton={false}
+                onSelect={onSelectCountry}
+              />
+            </View>
+          </View>
+          <CustomButton text="Next" onPress={goToNextSlide} />
         </View>
+
         <View style={styles.root}>
-          <SafeAreaView style={styles.safeRoot}>
-            <Text style={styles.headerTitle}>Customize your profile.</Text>
-            <Text style={styles.subtitle}>
-              Help others know more about you by adding a bio and profile
-              picture. You can always skip and come back later.
+          <View style={{ flex: 4, width: "100%" }}>
+            <Text style={styles.headerTitle}>Customize your Profile</Text>
+            <Text style={[styles.subtitle, { marginBottom: 30 }]}>
+              Help others know more about you by adding a profile picture. You can always skip and come back later.
             </Text>
-            <ImagePickerExample />
+            <TouchableOpacity style={{ alignItems: "center" }} onPress={pickImage}>
+              <Image style={styles.imageContainer} source={{ uri: image }} />
+            </TouchableOpacity>
+          </View>
+          <CustomButton text="Next" onPress={goToNextSlide} />
+        </View>
+
+        <View style={styles.root}>
+          <View style={{ flex: 4, width: "100%" }}>
+            <Text style={styles.headerTitle}>Add a Biography</Text>
+            <Text style={[styles.subtitle, { marginBottom: 15 }]}>
+              Express who you are by writing a small biography about yourself. You can always skip and come back later.
+            </Text>
             <TextInput
-              style={{borderColor:colorBorder, borderWidth: 2.0, minWidth: "100%", borderRadius: 20, display: "flex", textAlign:"left"}}
-              placeholder="Insert Bio..."
+              style={{
+                borderRadius: 20,
+                height: 200,
+                width: "100%",
+                backgroundColor: COLORS.secondary,
+                borderRadius: 5,
+                padding: 10,
+              }}
+              placeholder="Use 200 characters to express who you are"
+              placeholderTextColor={COLORS.secondaryAlternate}
               multiline={true}
               numberOfLines={7}
               onChangeText={(text) => setBio(text)}
               value={bio}
-              />
-            <CustomButton text = "Next" onPress={goToNextSlide}/>
-          </SafeAreaView>
+            />
+          </View>
+          <CustomButton text="Next" onPress={goToNextSlide} />
         </View>
+
         <View style={styles.root}>
-          <SafeAreaView style={styles.safeRoot}>
+          <View style={{ flex: 4 }}>
             <Text style={styles.headerTitle}>What are your interests?</Text>
-            <Text style={styles.subtitle}>
-              Choose between 3 to 5 interests for optimal recommendations.
+            <Text style={[styles.subtitle, { marginBottom: 10 }]}>
+              Choose between up to 5 interests for optimal recommendations.
             </Text>
-            {interests.map(renderInterests)}
-            <CustomButton text = "Finish" onPress={() => navigation.navigate("MainScreen")}/>
-          </SafeAreaView>
+            {values.interests.map(renderInterests)}
+          </View>
+          <CustomButton text="Finish" onPress={createAccountObject} />
         </View>
       </Carousel>
     </View>
@@ -238,7 +264,7 @@ const CreateProfileScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 50
+    marginBottom: 10,
   },
   rootView: {
     flex: 1,
@@ -248,14 +274,12 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   root: {
-    paddingTop: "20%",
-    paddingBottom: "20%",
-    paddingLeft: "10%",
-    paddingRight: "10%",
+    paddingVertical: 150,
+    paddingHorizontal: 40,
     flex: 1,
+    width: "100%",
     justifyContent: "center",
     alignItems: "flex-start",
-    width: "100%",
     backgroundColor: COLORS.white,
   },
   safeRoot: {
@@ -265,6 +289,12 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: COLORS.white,
   },
+  normalText: {
+    color: COLORS.primaryAlternate,
+    fontSize: 22,
+    fontWeight: "300",
+    textAlign: "left",
+  },
   headerTitle: {
     color: COLORS.primary,
     fontWeight: "bold",
@@ -272,29 +302,28 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   subtitle: {
-    color: COLORS.dark,
+    color: COLORS.primaryAlternate,
     fontSize: 16,
+    fontWeight: "300",
     textAlign: "left",
     lineHeight: 23,
-    marginBottom: 50
   },
   instructions: {
-    color: COLORS.dark,
+    color: COLORS.primaryAlternate,
     fontSize: 16,
     textAlign: "left",
     lineHeight: 23,
     marginBottom: 50,
-    marginLeft: 30
+    marginLeft: 30,
   },
   inputDesc: {
-    color: COLORS.dark,
-    fontWeight: "bold",
-    fontSize: 16,
+    color: COLORS.primary,
+    fontWeight: "500",
+    fontSize: 18,
     textAlign: "left",
-
   },
   title: {
-    color: COLORS.dark,
+    color: COLORS.primaryAlternate,
     fontSize: 22,
     fontWeight: "bold",
     marginTop: 20,
@@ -322,14 +351,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textInput: {
-    borderWidth: 1,
-    borderColor: "#777",
-    borderRadius: 10,
-    padding: 8,
-    marginTop: 10,
-    marginBottom: 10,
-    width: 315
-  }
+    backgroundColor: COLORS.secondary,
+    borderRadius: 3,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    height: 40,
+    justifyContent: "center",
+  },
+  imageContainer: {
+    borderWidth: 3,
+    borderColor: COLORS.light,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+  },
 });
 
 export default CreateProfileScreen;

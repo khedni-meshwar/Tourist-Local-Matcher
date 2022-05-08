@@ -17,7 +17,6 @@ import auth from "../../../firebase";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import Toast from "react-native-root-toast";
 
-
 const { width } = Dimensions.get("screen");
 
 export default function SignUpScreen({ navigation }) {
@@ -50,7 +49,7 @@ export default function SignUpScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
       <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
         <ImageBackground
           style={{ height: Dimensions.get("window").height / 2.5 }}
@@ -60,23 +59,10 @@ export default function SignUpScreen({ navigation }) {
         <View style={styles.bottomView}>
           <View style={styles.root}>
             <Text style={styles.headerTitle}>Sign up</Text>
-            <CustomButton
-              text="Already have an account? Sign in"
-              onPress={onLoginPressed}
-              type="TERTIARY"
-            />
+            <CustomButton text="Already have an account? Sign in" onPress={onLoginPressed} type="TERTIARY" />
 
-            <CustomInput
-              placeholder="Email"
-              value={email}
-              setValue={setEmail}
-            />
-            <CustomInput
-              placeholder="Password"
-              value={password}
-              setValue={setPassword}
-              secureTextEntry
-            />
+            <CustomInput placeholder="Email" value={email} setValue={setEmail} />
+            <CustomInput placeholder="Password" value={password} setValue={setPassword} secureTextEntry />
             <CustomInput
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -87,7 +73,7 @@ export default function SignUpScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

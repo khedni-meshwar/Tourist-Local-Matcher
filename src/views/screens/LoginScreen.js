@@ -20,8 +20,8 @@ import Toast from "react-native-root-toast";
 const { width } = Dimensions.get("screen");
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("johnsmith@gmail.com");
+  const [password, setPassword] = useState("johnjohn");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -78,7 +78,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
       <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
         <ImageBackground
           style={{ height: Dimensions.get("window").height / 2.5 }}
@@ -87,24 +87,11 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.bottomView}>
           <View style={styles.root}>
             <Text style={styles.headerTitle}>Log in</Text>
-            <CustomButton
-              text="Don't have an account? Create one"
-              onPress={onSignUpPressed}
-              type="TERTIARY"
-            />
+            <CustomButton text="Don't have an account? Create one" onPress={onSignUpPressed} type="TERTIARY" />
 
-            <CustomInput
-              placeholder="Email"
-              value={email}
-              setValue={setEmail}
-            />
+            <CustomInput placeholder="Email" value={email} setValue={setEmail} />
             {emailError.length > 0 && <Text style={styles.error}>{emailError}</Text>}
-            <CustomInput
-              placeholder="Password"
-              value={password}
-              setValue={setPassword}
-              secureTextEntry
-            />
+            <CustomInput placeholder="Password" value={password} setValue={setPassword} secureTextEntry />
             {passwordError.length > 0 && <Text style={styles.error}>{passwordError}</Text>}
             <CustomButton text="Sign In" onPress={onLoginPressed} />
             <CustomButton
@@ -117,7 +104,7 @@ export default function LoginScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
