@@ -11,6 +11,7 @@ import GettingStartedScreen from "./src/views/screens/GettingStartedScreen";
 import CreateProfileScreen from "./src/views/screens/CreateProfileScreen";
 import DetailsScreen from "./src/views/screens/DetailsScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
+import Header from "./src/views/components/Header"
 
 LogBox.ignoreAllLogs();
 
@@ -22,12 +23,22 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
-          <Stack.Screen name="GettingStartedScreen" component={GettingStartedScreen} />
+          <Stack.Screen
+            name="GettingStartedScreen"
+            component={GettingStartedScreen}
+          />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
           <Stack.Screen name="MainScreen" component={MainScreen} />
           <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
-          <Stack.Screen name="CreateProfileScreen" component={CreateProfileScreen} />
+          <Stack.Screen
+            name="CreateProfileScreen"
+            component={CreateProfileScreen}
+          />
+          <Stack.Screen
+            name="Header"
+            component={Header}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </RootSiblingParent>

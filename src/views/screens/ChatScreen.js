@@ -1,27 +1,12 @@
 import React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { SafeAreaView, Text } from "react-native";
+import Header from "../components/Header";
 
-export default function ChatScreen({ navigation }) {
-  const onPressHandler = () => {
-    navigation.navigate("MatchingScreen");
-  };
-
+const ChatScreen = ({ navigation }) => {
   return (
-    <View style={styles.body}>
-      <Text style={styles.text}>Chat Screen Placeholder</Text>
-    </View>
+    <SafeAreaView>
+      <Header title="Chat" />
+    </SafeAreaView>
   );
-}
-
-const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 40,
-    fontWeight: "bold",
-    margin: 10,
-  },
-});
+};
+export default ChatScreen;
