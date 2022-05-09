@@ -10,7 +10,10 @@ import SignUpScreen from "./src/views/screens/SignUpScreen";
 import GettingStartedScreen from "./src/views/screens/GettingStartedScreen";
 import CreateProfileScreen from "./src/views/screens/CreateProfileScreen";
 import DetailsScreen from "./src/views/screens/DetailsScreen";
+import MessageScreen from "./src/views/screens/MessageScreen";
+import UserProfileScreen from "./src/views/screens/UserProfileScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
+
 
 LogBox.ignoreAllLogs();
 
@@ -18,16 +21,24 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <RootSiblingParent>
+    <RootSiblingParent >
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
-          <Stack.Screen name="GettingStartedScreen" component={GettingStartedScreen} />
+          <Stack.Screen
+            name="GettingStartedScreen"
+            component={GettingStartedScreen}
+          />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
           <Stack.Screen name="MainScreen" component={MainScreen} />
           <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
-          <Stack.Screen name="CreateProfileScreen" component={CreateProfileScreen} />
+          <Stack.Screen
+            name="CreateProfileScreen"
+            component={CreateProfileScreen}
+          />
+          <Stack.Screen name="MessageScreen" component={MessageScreen} />
+          <Stack.Screen name="UserProfileScreen" component={UserProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </RootSiblingParent>

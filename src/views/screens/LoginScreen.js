@@ -16,6 +16,7 @@ import COLORS from "../../consts/colors";
 import auth from "../../../firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Toast from "react-native-root-toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("screen");
 
@@ -32,7 +33,13 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onForgotPasswordPressed = () => {};
-
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem("@userId", value);
+    } catch (e) {
+      // saving error
+    }
+  };
   const auth = getAuth();
   const onLoginPressed = () => {
     var emailValid = false;
@@ -63,13 +70,14 @@ export default function LoginScreen({ navigation }) {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredentials) => {
           const user = userCredentials.user;
-          console.log("Logged in with: ", user.email);
+          console.log("Logged in with: ", user.uid);
+          storeData(user.uid);
           let toast = Toast.show("Successfully logged in.", {
             duration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
           });
-          // navigation.navigate("MainScreen");
-          navigation.navigate("CreateProfileScreen");
+          navigation.navigate("MainScreen");
+          // navigation.navigate("CreateProfileScreen");
         })
         .catch((error) => {
           setPasswordError("Email or password is invalid.");

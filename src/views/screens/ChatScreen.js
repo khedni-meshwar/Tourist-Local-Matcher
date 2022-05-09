@@ -1,27 +1,55 @@
-import React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import ChatList from "../components/ChatList";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getFirestore,
+} from "@firebase/firestore";
 
-export default function ChatScreen({ navigation }) {
-  const onPressHandler = () => {
-    navigation.navigate("MatchingScreen");
-  };
+const auth = getAuth();
+const db = getFirestore();
+
+const ChatScreen = ({navigation}) => {
+  const [user, setUser] = useState([]);
+  const [matches, setMatches] = useState([]);
+
+  async function getUser() {
+    const currentUser = auth.currentUser;
+    setUser(currentUser.uid);
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(db, "users"),
+          where("matches", "array-contains", user)
+        ),
+        (snapshot) =>
+          setMatches(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+          )
+      ),
+    [user]
+  );
 
   return (
-    <View style={styles.body}>
-      <Text style={styles.text}>Chat Screen Placeholder</Text>
+    <View>
+      <Text>ChatScreen</Text>
+      <ChatList matches={matches} navigation={navigation} />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 40,
-    fontWeight: "bold",
-    margin: 10,
-  },
-});
+export default ChatScreen;
