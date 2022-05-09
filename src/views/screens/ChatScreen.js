@@ -13,7 +13,7 @@ import {
 const auth = getAuth();
 const db = getFirestore();
 
-const ChatScreen = () => {
+const ChatScreen = ({navigation}) => {
   const [user, setUser] = useState([]);
   const [matches, setMatches] = useState([]);
 
@@ -47,7 +47,7 @@ const ChatScreen = () => {
   return (
     <View>
       <Text>ChatScreen</Text>
-      <ChatList matches={matches} />
+      <ChatList matches={matches} navigation={navigation} />
     </View>
   );
 };

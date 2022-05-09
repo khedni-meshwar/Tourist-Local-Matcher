@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
+import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, getFirestore } from "firebase/firestore";
 
@@ -8,19 +8,22 @@ const auth = getAuth();
 const db = getFirestore();
 const chatsRef = collection(db, "chats");
 
-const ChatScreen = ({ navigation }) => {
+const MessageScreen = ({ route, navigation}) => {
+  const { matchedUser } = route.params;
+
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+    console.log(matchedUser)
     setMessages([
       {
         _id: 1,
-        text: "Hello developer",
+        text: "Hello",
         createdAt: new Date(),
         user: {
           _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
+          name: matchedUser.firstName + " " + matchedUser.lastName,
+          avatar: matchedUser.profilePhoto,
         },
       },
     ]);
@@ -35,12 +38,36 @@ const ChatScreen = ({ navigation }) => {
   return (
     <GiftedChat
       messages={messages}
+      renderUsernameOnMessage={true}
       onSend={(messages) => onSend(messages)}
+      onPressAvatar={() => navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}
       user={{
         _id: 1,
       }}
+      renderBubble={(props) => {
+        return (
+          <Bubble
+            {...props}
+            textStyle={{
+              right: {
+                color: "white",
+              },
+              left: {
+                color: "white",
+              },
+            }}
+            wrapperStyle={{
+              left: {
+                backgroundColor: "#667b80",
+              },
+              right: {
+                backgroundColor: "#04555c",
+              },
+            }}
+          />
+        );
+      }}
     />
   );
-
 };
-export default ChatScreen;
+export default MessageScreen;
