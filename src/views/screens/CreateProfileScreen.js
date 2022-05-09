@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, StatusBar, Dimensions, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  Dimensions,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import COLORS from "../../consts/colors";
 import CustomButton from "../components/CustomButton";
@@ -11,8 +20,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import values from "../../consts/values";
 import { Platform } from "expo-modules-core";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const db = getFirestore();
+const storage = getStorage();
 
 const CreateProfileScreen = ({ navigation }) => {
   const [carousel, setCarousel] = useState(null);
@@ -26,6 +37,13 @@ const CreateProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [interests, setInterests] = useState([]);
 
+  const [imgURI, setImageURI] = React.useState(null);
+  const [isUploading, setIsUploading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [remoteURL, setRemoteURL] = React.useState("");
+  const [error, setError] = React.useState(null);
+  const [type, setType] = useState(null);
+
   const goToNextSlide = () => {
     if (carousel) carousel.scrollToNext();
   };
@@ -35,6 +53,8 @@ const CreateProfileScreen = ({ navigation }) => {
   };
 
   const createAccountObject = () => {
+    handleCloudImageUpload();
+
     let account = {
       firstName,
       lastName,
@@ -42,9 +62,13 @@ const CreateProfileScreen = ({ navigation }) => {
       bio,
       image, // here its still a local uri path, you can use expo FileSystem or MediaLibary to do get an image out of it or array buffer or whatever
       interests: interests.map((interest) => interest.name),
+      countryCode,
+      type
     };
 
     console.log(account);
+
+    addDoc(collection(db, "users"), account);
 
     navigation.navigate("MainScreen");
   };
@@ -69,7 +93,15 @@ const CreateProfileScreen = ({ navigation }) => {
 
   const renderInterests = (interest) => {
     return (
-      <View key={interest.id} style={{ display: "flex", flexDirection: "row", padding: 5, alignItems: "center" }}>
+      <View
+        key={interest.id}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          padding: 5,
+          alignItems: "center",
+        }}
+      >
         <BouncyCheckbox
           fillColor={COLORS.primary}
           onPress={(isChecked) => {
@@ -84,7 +116,9 @@ const CreateProfileScreen = ({ navigation }) => {
             setInterests(interests);
           }}
         />
-        <Text style={{ fontWeight: "300", color: COLORS.primaryAlternate }}>{interest.name}</Text>
+        <Text style={{ fontWeight: "300", color: COLORS.primaryAlternate }}>
+          {interest.name}
+        </Text>
       </View>
     );
   };
@@ -97,14 +131,106 @@ const CreateProfileScreen = ({ navigation }) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImageURI(result.uri);
     }
+  };
+
+  const getBlobFromUri = async (uri) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+
+    return blob;
+  };
+
+  const manageFileUpload = async (
+    fileBlob,
+    { onStart, onProgress, onComplete, onFail }
+  ) => {
+    console.log("hi");
+    const imgName = "img-" + new Date().getTime();
+
+    const storageRef = ref(storage, `users/${imgName}.jpg`);
+
+    console.log("uploading file", imgName);
+
+    // Create file metadata including the content type
+    const metadata = {
+      contentType: "image/jpeg",
+    };
+
+    // Trigger file upload start event
+    onStart && onStart();
+    const uploadTask = uploadBytes(storageRef, fileBlob);
+
+    uploadTask.then(
+      (snapshot) => {
+        console.log("Uploaded a blob or file!");
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+          setImage(downloadURL);
+        });
+      },
+      (error) => {},
+      () => {}
+    );
+  };
+
+  const handleLocalImageUpload = async () => {
+    const fileURI = await pickImage();
+
+    if (fileURI) {
+      setImageURI(fileURI);
+    }
+  };
+
+  const onStart = () => {
+    setIsUploading(true);
+  };
+
+  const onProgress = (progress) => {
+    setProgress(progress);
+  };
+  const onComplete = (fileUrl) => {
+    setRemoteURL(fileUrl);
+    setIsUploading(false);
+    setImageURI(null);
+  };
+
+  const onFail = (error) => {
+    setError(error);
+    setIsUploading(false);
+  };
+  const handleCloudImageUpload = async () => {
+    if (!imgURI) return;
+
+    let fileToUpload = null;
+
+    const blob = await getBlobFromUri(imgURI);
+
+    await manageFileUpload(blob, { onStart, onProgress, onComplete, onFail });
   };
 
   const onSelectCountry = (country) => {
     const { cca2, callingCode } = country;
     setCountryCode(cca2);
     setCallingCode(callingCode[0]);
+  };
+
+  const storeType = async (value) => {
+    try {
+      await AsyncStorage.setItem("@type", value);
+    } catch (e) {
+      // saving error
+    }
   };
 
   return (
@@ -119,10 +245,80 @@ const CreateProfileScreen = ({ navigation }) => {
       >
         <View style={styles.root}>
           <View style={{ flex: 4 }}>
+            <Text style={styles.normalText}>Before we get started...</Text>
+            <Text style={[styles.headerTitle, { marginBottom: 10 }]}>
+              How do you want to use the app?
+            </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: COLORS.secondary,
+                padding: 50,
+                borderRadius: 15,
+                color: "white",
+              }}
+              onPress={() => {
+                setType("tourist");
+                storeType("tourist");
+                goToNextSlide();
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ fontSize: 20, color: COLORS.secondaryAlternate }}
+                >
+                  I am visiting Lebanon
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: COLORS.secondary,
+                padding: 50,
+                borderRadius: 15,
+                color: "white",
+                marginTop: 20,
+                fontSize: 40,
+              }}
+              onPress={() => {
+                setType("resident");
+                storeType("resident");
+                goToNextSlide();
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ fontSize: 20, color: COLORS.secondaryAlternate }}
+                >
+                  I want to meet tourists
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.root}>
+          <View style={{ flex: 4 }}>
             <View style={styles.header}>
-              <Text style={styles.normalText}>Let's create your profile...</Text>
-              <Text style={[styles.headerTitle, { marginBottom: 10 }]}>What should we call you?</Text>
-              <Text style={styles.subtitle}>Your name will be shown to other users on the app</Text>
+              <Text style={styles.normalText}>
+                Let's create your profile...
+              </Text>
+              <Text style={[styles.headerTitle, { marginBottom: 10 }]}>
+                What should we call you?
+              </Text>
+              <Text style={styles.subtitle}>
+                Your name will be shown to other users on the app
+              </Text>
             </View>
             <View style={{ marginBottom: 20 }}>
               <Text style={styles.inputDesc}>First Name</Text>
@@ -148,7 +344,8 @@ const CreateProfileScreen = ({ navigation }) => {
           <View style={{ flex: 4, width: "100%" }}>
             <Text style={styles.headerTitle}>When were you born?</Text>
             <Text style={[styles.subtitle, { marginBottom: 10 }]}>
-              This information is kept private but will be used to match you with others.
+              This information is kept private but will be used to match you
+              with others.
             </Text>
             {Platform.OS === "ios" ? (
               <DateTimePicker
@@ -212,10 +409,14 @@ const CreateProfileScreen = ({ navigation }) => {
           <View style={{ flex: 4, width: "100%" }}>
             <Text style={styles.headerTitle}>Customize your Profile</Text>
             <Text style={[styles.subtitle, { marginBottom: 30 }]}>
-              Help others know more about you by adding a profile picture. You can always skip and come back later.
+              Help others know more about you by adding a profile picture. You
+              can always skip and come back later.
             </Text>
-            <TouchableOpacity style={{ alignItems: "center" }} onPress={pickImage}>
-              <Image style={styles.imageContainer} source={{ uri: image }} />
+            <TouchableOpacity
+              style={{ alignItems: "center" }}
+              onPress={pickImage}
+            >
+              <Image style={styles.imageContainer} source={{ uri: imgURI }} />
             </TouchableOpacity>
           </View>
           <CustomButton text="Next" onPress={goToNextSlide} />
@@ -225,7 +426,8 @@ const CreateProfileScreen = ({ navigation }) => {
           <View style={{ flex: 4, width: "100%" }}>
             <Text style={styles.headerTitle}>Add a Biography</Text>
             <Text style={[styles.subtitle, { marginBottom: 15 }]}>
-              Express who you are by writing a small biography about yourself. You can always skip and come back later.
+              Express who you are by writing a small biography about yourself.
+              You can always skip and come back later.
             </Text>
             <TextInput
               style={{
