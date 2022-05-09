@@ -9,7 +9,7 @@ export default function SwipeableImage({ user, willLike, willPass }) {
   return (
     <View>
       <TouchableOpacity onPress={test} activeOpacity={0.9}>
-        <Image source={{ uri: user.picture.large }} style={styles.photo} />
+        <Image source={{ uri: user.image }} style={styles.photo} />
         {willLike && (
           <View style={styles.likeBox}>
             <Text style={{ ...styles.textPrimary, color: "#04555c" }}>
@@ -27,7 +27,7 @@ export default function SwipeableImage({ user, willLike, willPass }) {
         <View style={styles.textContainer}>
           <View style={styles.textRow}>
             <Text style={[styles.textPrimary, styles.textShadow]}>
-              {user.name.first}
+              {user.firstName + " " + user.lastName}
             </Text>
             <Text style={[styles.textSecondary, styles.textShadow]}>
               {user.dob.age}
@@ -40,7 +40,7 @@ export default function SwipeableImage({ user, willLike, willPass }) {
               color="white"
             ></FontAwesome>
             <Text style={[styles.textSecondary, styles.textShadow]}>
-              {user.location.city}
+              {user.countryCode}
             </Text>
           </View>
         </View>

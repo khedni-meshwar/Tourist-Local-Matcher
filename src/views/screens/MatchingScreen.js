@@ -4,6 +4,18 @@ import Constants from "expo-constants";
 import axios from "axios";
 import BottomBar from "../components/BottomBar";
 import Swipes from "../components/Swipes";
+import {
+  doc,
+  addDoc,
+  collection,
+  Timestamp,
+  getFirestore,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+
+const db = getFirestore();
 
 export default function MatchingScreen({ navigation }) {
   const [users, setUsers] = useState([]);
@@ -15,17 +27,26 @@ export default function MatchingScreen({ navigation }) {
   };
 
   async function fetchUsers() {
-    try {
-      const { data } = await axios.get(
-        "https://randomuser.me/api/?gender=female&results=50"
-      );
-      setUsers(data.results);
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error getting users", "", [
-        { text: "Retry", onPress: () => fetchUsers() },
-      ]);
-    }
+    // try {
+    //   const { data } = await axios.get(
+    //     "https://randomuser.me/api/?gender=female&results=50"
+    //   );
+    //   setUsers(data.results);
+    // } catch (error) {
+    //   console.log(error);
+    //   Alert.alert("Error getting users", "", [
+    //     { text: "Retry", onPress: () => fetchUsers() },
+    //   ]);
+    // }
+    let users = [];
+    const q = query(collection(db, "users"), where("type","==", "resident"));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+      users.push(doc.data());
+    });
+    setUsers(users);
   }
 
   useEffect(() => {
