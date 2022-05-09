@@ -13,31 +13,9 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 const auth = getAuth();
 const db = getFirestore();
 
-const ChatList = ({ userId }) => {
+const ChatList = ({ matches }) => {
   // const { auth } = await firebase.auth();
-  // let userUid = currentUser.uid;
-
-  const [matches, setMatches] = useState([]);
-  const { user } = userId;
-  console.log(userId);
-
-  useEffect(
-    () =>
-      onSnapshot(
-        query(
-          collection(db, "users"),
-          where("matches", "array-contains", userId.replace(/\s/g, ""))
-        ),
-        (snapshot) =>
-          setMatches(
-            snapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }))
-          )
-      ),
-    [user]
-  );
+  // let userUid = currentUser.uid; 
 
   return matches.length > 0 ? (
     <FlatList

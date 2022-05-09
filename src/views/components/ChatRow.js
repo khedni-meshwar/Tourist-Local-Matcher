@@ -12,7 +12,7 @@ const ChatRow = ({ matchDetails }) => {
   return (
     <TouchableOpacity>
       <Image />
-      {/* {console.log(matchedUserInfo)} */}
+      {console.log(matchedUserInfo)}
       <Text>ChatRow</Text>
     </TouchableOpacity>
   );

@@ -1,27 +1,55 @@
-import { View, Text } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import ChatList from '../components/ChatList';
+import { View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import ChatList from "../components/ChatList";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getFirestore,
+} from "@firebase/firestore";
 
 const auth = getAuth();
+const db = getFirestore();
 
 const ChatScreen = () => {
   const [user, setUser] = useState([]);
+  const [matches, setMatches] = useState([]);
+
   async function getUser() {
     const currentUser = auth.currentUser;
-    setUser(currentUser.uid)
+    setUser(currentUser.uid);
   }
 
-   useEffect(() => {
-        getUser()
-   }, [])
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(db, "users"),
+          where("matches", "array-contains", user)
+        ),
+        (snapshot) =>
+          setMatches(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+          )
+      ),
+    [user]
+  );
 
   return (
     <View>
       <Text>ChatScreen</Text>
-      <ChatList userId={user}/>
+      <ChatList matches={matches} />
     </View>
   );
-}
+};
 
-export default ChatScreen
+export default ChatScreen;
