@@ -12,7 +12,6 @@ import CreateProfileScreen from "./src/views/screens/CreateProfileScreen";
 import DetailsScreen from "./src/views/screens/DetailsScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
 import Header from "./src/views/components/Header";
-import { style as tw } from "twrnc";
 
 LogBox.ignoreAllLogs();
 
@@ -20,7 +19,7 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <RootSiblingParent style={tw("flex-1 justify-center items-center")}>
+    <RootSiblingParent >
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
