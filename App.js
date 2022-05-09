@@ -19,11 +19,13 @@ LogBox.ignoreAllLogs();
 
 const Stack = createStackNavigator();
 
+
+
 const App = () => {
   return (
     <RootSiblingParent >
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={{ headerShown: false }} >
           <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
           <Stack.Screen
             name="GettingStartedScreen"

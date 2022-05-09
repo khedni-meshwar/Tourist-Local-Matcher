@@ -71,13 +71,16 @@ export default function LoginScreen({ navigation }) {
         .then((userCredentials) => {
           const user = userCredentials.user;
           console.log("Logged in with: ", user.uid);
+          console.log(user);
           storeData(user.uid);
           let toast = Toast.show("Successfully logged in.", {
             duration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
           });
-          navigation.navigate("MainScreen");
-          // navigation.navigate("CreateProfileScreen");
+          if (user.metadata.creationTime === user.metadata.lastSignInTime)
+            navigation.navigate("CreateProfileScreen");
+          else
+            navigation.navigate("MainScreen");
         })
         .catch((error) => {
           setPasswordError("Email or password is invalid.");
@@ -95,12 +98,29 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.bottomView}>
           <View style={styles.root}>
             <Text style={styles.headerTitle}>Log in</Text>
-            <CustomButton text="Don't have an account? Create one" onPress={onSignUpPressed} type="TERTIARY" />
+            <CustomButton
+              text="Don't have an account? Create one"
+              onPress={onSignUpPressed}
+              type="TERTIARY"
+            />
 
-            <CustomInput placeholder="Email" value={email} setValue={setEmail} />
-            {emailError.length > 0 && <Text style={styles.error}>{emailError}</Text>}
-            <CustomInput placeholder="Password" value={password} setValue={setPassword} secureTextEntry />
-            {passwordError.length > 0 && <Text style={styles.error}>{passwordError}</Text>}
+            <CustomInput
+              placeholder="Email"
+              value={email}
+              setValue={setEmail}
+            />
+            {emailError.length > 0 && (
+              <Text style={styles.error}>{emailError}</Text>
+            )}
+            <CustomInput
+              placeholder="Password"
+              value={password}
+              setValue={setPassword}
+              secureTextEntry
+            />
+            {passwordError.length > 0 && (
+              <Text style={styles.error}>{passwordError}</Text>
+            )}
             <CustomButton text="Sign In" onPress={onLoginPressed} />
             <CustomButton
               text="Forgot password?"

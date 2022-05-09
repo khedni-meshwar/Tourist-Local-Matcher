@@ -9,7 +9,18 @@ import {
 } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import COLORS from "../../consts/colors";
+import { getAuth } from "firebase/auth";
+
 const OnBoardScreen = ({ navigation }) => {
+  // const isAuthenticated = async() => {
+  //   // console.log(firebase.auth().currentUser);
+  //   // return firebase.auth().currentUser;
+  //   let loginStatus=await AsyncStorage.getItem('@userId');
+  //   console.log("loginStatus");
+  //   console.log("loginStatus");
+  //   return (loginStatus!==null);
+  // };
+
   return (
     <View style={{ flex: 1 }}>
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
@@ -29,11 +40,16 @@ const OnBoardScreen = ({ navigation }) => {
             Lebanon with us
           </Text>
           <Text style={{ color: COLORS.white, lineHeight: 25, marginTop: 15 }}>
-            Meet new people, discover hidden gems, and get to know Lebanon on a deeper level.
+            Meet new people, discover hidden gems, and get to know Lebanon on a
+            deeper level.
           </Text>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => navigation.navigate("GettingStartedScreen")}
+            onPress={() => {
+              // if (isAuthenticated) navigation.navigate("MainScreen");
+              // else
+              navigation.navigate("GettingStartedScreen");
+            }}
           >
             <View style={style.btn}>
               <Text style={{ fontWeight: "bold" }}>Get Started</Text>
