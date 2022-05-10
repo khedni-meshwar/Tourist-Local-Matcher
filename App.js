@@ -12,6 +12,7 @@ import CreateProfileScreen from "./src/views/screens/CreateProfileScreen";
 import DetailsScreen from "./src/views/screens/DetailsScreen";
 import MessageScreen from "./src/views/screens/MessageScreen";
 import UserProfileScreen from "./src/views/screens/UserProfileScreen";
+import QueryScreen from "./src/views/screens/QueryScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
 
 
@@ -41,6 +42,7 @@ const App = () => {
           />
           <Stack.Screen name="MessageScreen" component={MessageScreen} />
           <Stack.Screen name="UserProfileScreen" component={UserProfileScreen} />
+          <Stack.Screen name="QueryScreen" component={QueryScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </RootSiblingParent>

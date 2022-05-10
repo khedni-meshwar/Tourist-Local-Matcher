@@ -44,7 +44,8 @@
     "react-native-web": "0.17.1",
     "react-navigation": "^4.4.4",
     "tailwind-react-native-classnames": "^1.5.1",
-    "twrnc": "^3.3.1"
+    "twrnc": "^3.3.1",
+    "expo-firebase-analytics": "~6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
