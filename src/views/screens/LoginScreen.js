@@ -32,6 +32,13 @@ export default function LoginScreen({ navigation }) {
   const onSignUpPressed = () => {
     navigation.navigate("SignUpScreen");
   };
+  const storeType = async (value) => {
+    try {
+      await AsyncStorage.setItem("@type", value);
+    } catch (e) {
+      co
+    }
+  };
 
   const onForgotPasswordPressed = () => {};
   const storeData = async (value) => {
@@ -69,11 +76,12 @@ export default function LoginScreen({ navigation }) {
 
     if (emailValid && passwordValid) {
       signInWithEmailAndPassword(auth, email, password)
-        .then((userCredentials) => {
+        .then(async (userCredentials) => {
           const user = userCredentials.user;
           console.log("Logged in with: ", user.uid);
           console.log(user);
-          storeData(user.uid);
+          await storeData(user.uid);
+          await storeType("resident");
           let toast = Toast.show("Successfully logged in.", {
             duration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,

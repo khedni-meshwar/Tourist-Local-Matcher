@@ -21,7 +21,9 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import values from "../../consts/values";
 import { Platform } from "expo-modules-core";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getAuth, updateProfile } from "firebase/auth";
 
+const auth = getAuth();
 const db = getFirestore();
 const storage = getStorage();
 
@@ -60,19 +62,24 @@ const CreateProfileScreen = ({ navigation }) => {
       lastName,
       dob,
       bio,
-      image, 
+      image,
       interests: interests.map((interest) => interest.name),
       countryCode,
-      type
+      type,
     };
 
     console.log(account);
 
     addDoc(collection(db, "users"), account);
 
+    updateProfile(auth.currentUser, {
+      displayName: type,
+    })
+      .then(() => {console.log("done type update")})
+      .catch((error) => {});
+
     navigation.navigate("MainScreen");
   };
-
 
   const renderInterests = (interest) => {
     return (

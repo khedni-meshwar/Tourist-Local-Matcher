@@ -14,44 +14,42 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAuth, updateProfile } from "firebase/auth";
 
+const auth = getAuth();
 const db = getFirestore();
 
 export default function MatchingScreen({ navigation }) {
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [type, setType] = useState(null);
   const swipesRef = useRef(null);
 
   const onPressHandler = () => {
     navigation.navigate("Screen_B");
   };
 
+
   async function fetchUsers() {
-    // try {
-    //   const { data } = await axios.get(
-    //     "https://randomuser.me/api/?gender=female&results=50"
-    //   );
-    //   setUsers(data.results);
-    // } catch (error) {
-    //   console.log(error);
-    //   Alert.alert("Error getting users", "", [
-    //     { text: "Retry", onPress: () => fetchUsers() },
-    //   ]);
-    // }
+    const currentType = auth.currentUser.displayName;
     let users = [];
-    const q = query(collection(db, "users"), where("type","==", "resident"));
+    let newType = "";
+    if (currentType === "tourist") newType = "resident";
+    else if (currentType === "resident") newType = "tourist";
+    const q = query(collection(db, "users"), where("type", "==", newType));
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+      // console.log(doc.data());
       users.push(doc.data());
     });
     setUsers(users);
-  }
+  };
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [type]);
 
   function handleLike() {
     console.log("like");
