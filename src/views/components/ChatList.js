@@ -10,15 +10,12 @@ import React, { useState, useEffect } from "react";
 import ChatRow from "./ChatRow";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Icon from 'react-native-vector-icons/AntDesign';
-import IconEnt from 'react-native-vector-icons/Entypo';
 import COLORS from "../../consts/colors";
 
 const auth = getAuth();
 const db = getFirestore();
 
 const ChatList = ({ matches, navigation }) => {
-  // const { auth } = await firebase.auth();
-  // let userUid = currentUser.uid; 
   console.log(matches)
   return matches.length > 0 ? (
     <View>
