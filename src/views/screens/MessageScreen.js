@@ -1,7 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, getFirestore } from "firebase/firestore";
+import COLORS from "../../consts/colors";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const auth = getAuth();
 
@@ -35,11 +38,27 @@ const MessageScreen = ({ route, navigation}) => {
     );
   }, []);
 
+  const renderSend = (props) => {
+    return (
+      <Send {...props}>
+        <View>
+          <MaterialCommunityIcons
+            name="send-circle"
+            style={{marginBottom: 5, marginRight: 5}}
+            size={32}
+            color= {COLORS.primary}
+          />
+        </View>
+      </Send>
+    );
+  };
   return (
+
     <GiftedChat
       messages={messages}
-      renderUsernameOnMessage={true}
       onSend={(messages) => onSend(messages)}
+      renderUsernameOnMessage={true}
+      renderSend={renderSend}
       onPressAvatar={() => navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}
       user={{
         _id: 1,
@@ -69,5 +88,12 @@ const MessageScreen = ({ route, navigation}) => {
       }}
     />
   );
-};
+}
+const styles = StyleSheet.create({
+  header: {
+    display: "flex",
+    backgroundColor: COLORS.primary,
+    width: "100%",
+  }
+});
 export default MessageScreen;
