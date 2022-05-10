@@ -19,7 +19,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import COLORS from "../../consts/colors";
 import app from "../../../firebase";
-// import places from '../../consts/places';
+import places from '../../consts/places';
 import {
   doc,
   addDoc,
@@ -34,9 +34,9 @@ import {
 const db = getFirestore();
 
 
-const { width } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("screen");
 
-const ExploreScreen = ({ navigation }) => {
+const QueryScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [places, setPlaces] = useState([]);
 
@@ -58,36 +58,11 @@ const ExploreScreen = ({ navigation }) => {
     getLocations();
   }, []); 
 
-  const categoryIcons = [
-    <FontAwesome5 name="umbrella-beach" size={25} color={COLORS.primary} />,
-    <FontAwesome name="tree" size={25} color={COLORS.primary} />,
-    <FontAwesome name="cutlery" size={25} color={COLORS.primary} />,
-    <FontAwesome name="glass" size={25} color={COLORS.primary} />,
-  ];
-  const ListCategories = () => {
-    return (
-      <View style={style.categoryContainer}>
-        {categoryIcons.map((icon, index) => (
-          <View key={index} style={style.iconContainer}>
-            {icon}
-          </View>
-        ))}
-      </View>
-    );
-  };
-
-  const handleKeyPress = (e) => {
-    var key = e.key;
-    console.log(key);
-    if(key == "enter"){
-      navigation.navigate("QueryScreen");
-      console.log("Enterrrr");
-    }
-  }
 
   const Card = ({ place }) => {
     return (
       <TouchableOpacity
+      style={style.card}
         activeOpacity={0.8}
         onPress={() => navigation.navigate("DetailsScreen", place)}
       >
@@ -173,50 +148,25 @@ const ExploreScreen = ({ navigation }) => {
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
       <View style={style.header}>
         <Icon name="sort" size={28} color={COLORS.white} />
+        <Text style={style.headerTitle}>Results</Text>
         <Icon name="notifications-none" size={28} color={COLORS.white} />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            backgroundColor: COLORS.primary,
-            height: 120,
-            paddingHorizontal: 20,
-          }}
-        >
+
+        {/* <View>
           <View style={{ flex: 1 }}>
-            <Text style={style.headerTitle}>Explore the</Text>
-            <Text style={style.headerTitle}>beautiful places</Text>
-            <View style={style.inputContainer}>
-              <Icon style={{color: COLORS.primary}} name="search" size={28} />
-              <TextInput
-                placeholder="Search place"
-                style={{ color: COLORS.dark }}
-                onKeyPress={(e)=>{handleKeyPress(e)}}
-              />
-            </View>
+            <Text style={style.headerTitle}>Results</Text>
           </View>
-        </View>
-        <ListCategories />
-        <Text style={style.sectionTitle}>Places</Text>
+        </View> */}
         <View>
           <FlatList
             contentContainerStyle={{ paddingLeft: 20 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
+            vertical
+            showsVerticalScrollIndicator={false}
             data={places}
             renderItem={({ item }) => <Card place={item} />}
           />
-          <Text style={style.sectionTitle}>Recommended</Text>
-          <FlatList
-            snapToInterval={width - 20}
-            contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={places}
-            renderItem={({ item }) => <RecommendedCard place={item} />}
-          />
         </View>
-      </ScrollView>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };
@@ -267,8 +217,8 @@ const style = StyleSheet.create({
     fontSize: 20,
   },
   cardImage: {
-    height: 220,
-    width: width / 2,
+    height: height/2.5,
+    width: width / 1.2,
     marginRight: 20,
     padding: 10,
     overflow: "hidden",
@@ -282,5 +232,12 @@ const style = StyleSheet.create({
     overflow: "hidden",
     padding: 10,
   },
+  card: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      alignContent: "center",
+      padding: 10,
+  }
 });
-export default ExploreScreen;
+export default QueryScreen;
