@@ -105,6 +105,7 @@ export default function MatchingScreen({ navigation }) {
           },
           { merge: true }
         );
+        navigation.navigate("MatchedScreen");
       }
     nextUser();
   }
