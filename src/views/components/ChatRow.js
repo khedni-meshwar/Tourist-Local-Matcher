@@ -1,31 +1,27 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
+import COLORS from "../../consts/colors";
 
 const ChatRow = ({ matchDetails, navigation }) => {
 
   return (
     <TouchableOpacity
       key={matchDetails.id}
-      onPress={() => navigation.navigate("MessageScreen", {matchedUser: matchDetails})}
-    >
+      onPress={() => navigation.navigate("MessageScreen", {matchedUser: matchDetails})}>
       <View
-        style={{
-          flexDirection: "row",
-          width: "100%",
-          alignItems: "center",
-          paddingHorizontal: 20,
-        }}
+        style={styles.container}
       >
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginRight: "5%" }}>
           <Image
             style={{
               width: 70,
               height: undefined,
               aspectRatio: 1,
               borderRadius: 150,
+              
             }}
             source={{
-              uri: matchDetails.profilePhoto,
+              uri: matchDetails.image
             }}
           />
         </View>
@@ -37,17 +33,40 @@ const ChatRow = ({ matchDetails, navigation }) => {
               alignItems: "center",
             }}
           >
-            <Text>{matchDetails.firstName + " " + matchDetails.lastName}</Text>
-            <Text>{"time"}</Text>
+            <Text style={styles.initials}>{matchDetails.firstName + " " + matchDetails.lastName}</Text>
+            <Text style={styles.time}>{"time"}</Text>
           </View>
           <View>
-            <Text>{"lastMessage"}</Text>
+            <Text style={styles.lastMsg}>{"lastMessage"}</Text>
           </View>
         </View>
       </View>
-      <View style={{ width: "90%", height: 1, backgroundColor: "#909090" }} />
+      <View style={{ width: "90%", height: 1, backgroundColor: COLORS.grey }} />
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginBottom: "1.5%",
+    marginTop: "1.5%"
+  },
+  initials: {
+    fontWeight: "bold", 
+    fontSize: 20,
+    color: COLORS.primary
+  },
+  time: {
+    color: COLORS.secondaryAlternate
+  },
+  lastMsg: {
+    color: COLORS.secondaryAlternate
+  }
+});
+
 
 export default ChatRow;

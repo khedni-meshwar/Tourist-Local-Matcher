@@ -77,18 +77,10 @@ export default function ProfileScreen({ navigation }) {
                     <Image source={require("../../assets/images/media3.jpg")} style={styles.image} resizeMode="cover"></Image>
                 </View>
             </ScrollView>
-            <View style={styles.mediaCount}>
-                <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>70</Text>
-                <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Media</Text>
-            </View>
         </View>
 
     </ScrollView>
 </SafeAreaView>
-    // <View style={styles.body}>
-    //   <Text style={styles.text}>Profile Screen Placeholder</Text>
-    //   <Button title="Signout" onPress={onSignOutPress}/>
-    // </View>
   );
 }
 
@@ -101,16 +93,14 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 40,
     fontWeight: "bold",
+    color: "#52575D",
     margin: 10,
   },
   container: {
     flex: 1,
     backgroundColor: "#FFF"
 },
-text: {
-    fontFamily: "HelveticaNeue",
-    color: "#52575D"
-},
+
 image: {
     flex: 1,
     height: undefined,

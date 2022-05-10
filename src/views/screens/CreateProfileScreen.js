@@ -60,7 +60,7 @@ const CreateProfileScreen = ({ navigation }) => {
       lastName,
       dob,
       bio,
-      image, // here its still a local uri path, you can use expo FileSystem or MediaLibary to do get an image out of it or array buffer or whatever
+      image, 
       interests: interests.map((interest) => interest.name),
       countryCode,
       type
@@ -73,23 +73,6 @@ const CreateProfileScreen = ({ navigation }) => {
     navigation.navigate("MainScreen");
   };
 
-  const insertUserToDB = () => {
-    const docData = {
-      stringExample: "Hello!",
-      booleanExample: true,
-      numberExample: 3.14159265,
-      dateExample: Timestamp.fromDate(new Date("December 10, 1815")),
-      arrayExample: [5, true, "hello"],
-      nullExample: null,
-      objectExample: {
-        a: 5,
-        b: {
-          nested: "foo",
-        },
-      },
-    };
-    addDoc(collection(db, "users"), docData);
-  };
 
   const renderInterests = (interest) => {
     return (
