@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import ChatList from "../components/ChatList";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -45,10 +45,9 @@ const ChatScreen = ({navigation}) => {
   );
 
   return (
-    <View>
-      <Text>ChatScreen</Text>
-      <ChatList matches={matches} navigation={navigation} />
-    </View>
+      <View>
+        <ChatList matches={matches} navigation={navigation} />
+      </View>
   );
 };
 
