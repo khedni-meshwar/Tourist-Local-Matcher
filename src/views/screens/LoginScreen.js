@@ -8,6 +8,7 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
@@ -90,6 +91,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+      
       <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
         <ImageBackground
           style={{ height: Dimensions.get("window").height / 2.5 }}
@@ -98,6 +100,7 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.bottomView}>
           <View style={styles.root}>
             <Text style={styles.headerTitle}>Log in</Text>
+
             <CustomButton
               text="Don't have an account? Create one"
               onPress={onSignUpPressed}
@@ -128,7 +131,6 @@ export default function LoginScreen({ navigation }) {
               type="TERTIARY"
               style={{ alignItems: "right" }}
             />
-            <SocialSignInButtons />
           </View>
         </View>
       </ScrollView>
