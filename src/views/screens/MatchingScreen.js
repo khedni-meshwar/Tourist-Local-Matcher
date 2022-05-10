@@ -13,6 +13,9 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
+  setDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, updateProfile } from "firebase/auth";
@@ -23,13 +26,26 @@ const db = getFirestore();
 export default function MatchingScreen({ navigation }) {
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [type, setType] = useState(null);
   const swipesRef = useRef(null);
+  const [currentSignedInUser, setCurrentSignedInUser] = useState(null);
+  const [currentSignedInUserObject, setCurrentSignedInUserObject] =
+    useState(null);
 
   const onPressHandler = () => {
     navigation.navigate("Screen_B");
   };
 
+  async function fetchMainUser() {
+    const userSnapshot = await getDocs(
+      query(
+        collection(db, "users"),
+        where("authId", "==", auth.currentUser.uid)
+      )
+    );
+    userSnapshot.forEach(async (doc) => {
+      await setCurrentSignedInUserObject({ id: doc.id, ...doc.data() });
+    });
+  }
 
   async function fetchUsers() {
     const currentType = auth.currentUser.displayName;
@@ -37,27 +53,80 @@ export default function MatchingScreen({ navigation }) {
     let newType = "";
     if (currentType === "tourist") newType = "resident";
     else if (currentType === "resident") newType = "tourist";
+
     const q = query(collection(db, "users"), where("type", "==", newType));
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // console.log(doc.data());
-      users.push(doc.data());
+      console.log(currentSignedInUserObject);
+      if (
+        !currentSignedInUserObject.likes.includes(doc.id) && !currentSignedInUserObject.matches.includes(doc.id)
+      )
+        users.push({ id: doc.id, ...doc.data() });
     });
     setUsers(users);
-  };
+  }
 
-  useEffect(() => {
-    fetchUsers();
-  }, [type]);
+  useEffect(async () => {
+    await fetchMainUser();
+  }, []);
 
-  function handleLike() {
+  useEffect(async () => {
+    await fetchUsers();
+  }, [currentSignedInUserObject]);
+
+  async function handleLike() {
     console.log("like");
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "users"),
+        where("authId", "==", auth.currentUser.uid)
+      )
+    );
+    await querySnapshot.forEach((doc) => {
+      setCurrentSignedInUser(doc.id);
+    }); //
+    setDoc(
+      doc(db, "users", currentSignedInUser),
+      {
+        likes: arrayUnion(users[currentIndex].id),
+      },
+      { merge: true }
+    );
+
+    if (users[currentIndex].likes)
+      if (users[currentIndex].likes.includes(auth.currentUser.uid)) {
+        console.log("you matched!");
+        await setDoc(
+          doc(db, "users", currentSignedInUser),
+          {
+            matches: arrayUnion(users[currentIndex].id),
+          },
+          { merge: true }
+        );
+      }
     nextUser();
   }
 
-  function handlePass() {
+  async function handlePass() {
     console.log("pass");
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "users"),
+        where("authId", "==", auth.currentUser.uid)
+      )
+    );
+    await querySnapshot.forEach((doc) => {
+      setCurrentSignedInUser(doc.id);
+    }); //
+    setDoc(
+      doc(db, "users", currentSignedInUser),
+      {
+        dislikes: arrayUnion(users[currentIndex].id),
+      },
+      { merge: true }
+    );
     nextUser();
   }
 
