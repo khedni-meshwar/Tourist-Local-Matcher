@@ -26,7 +26,7 @@ const MessageScreen = ({ route, navigation}) => {
         user: {
           _id: 2,
           name: matchedUser.firstName + " " + matchedUser.lastName,
-          avatar: matchedUser.profilePhoto,
+          avatar: matchedUser.image,
         },
       },
     ]);

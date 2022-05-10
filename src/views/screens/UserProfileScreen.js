@@ -22,7 +22,7 @@ export default function UserProfileScreen({ route, navigation }) {
         </View>
 
         <View style={styles.infoContainer}>
-            <Text style={[styles.text, { color:COLORS.primaryAlternate, fontWeight: "200", fontSize: 36 }]}>{matchedUser.firstName + " " + matchedUser.lastName}</Text>
+            <Text style={[styles.text, { color:COLORS.primaryAlternate, fontWeight: "500", fontSize: 36 }]}>{matchedUser.firstName + " " + matchedUser.lastName}</Text>
             <Text style={[styles.text, { color: COLORS.secondaryAlternate, fontSize: 20 }]}>{matchedUser.bio}</Text>
         </View>
 

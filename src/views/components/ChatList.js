@@ -52,7 +52,9 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 40,
     fontWeight: "bold",
-    color: COLORS.primary
+    color: COLORS.primary,
+    paddingBottom:10,
+    paddingTop:20
   },
   noMatches: {
     display: "flex",

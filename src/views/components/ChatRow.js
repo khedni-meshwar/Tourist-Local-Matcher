@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   initials: {
     fontWeight: "bold", 
     fontSize: 20,
-    color: COLORS.primary
+    color: COLORS.dark
   },
   time: {
     color: COLORS.secondaryAlternate
