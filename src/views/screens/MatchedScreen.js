@@ -1,6 +1,7 @@
 import { View, Text, Image, Dimensions, ImageBackground } from 'react-native'
 import React from 'react'
 import COLORS from "../../consts/colors";
+import CustomButton from '../components/CustomButton';
 
 
 const MatchedScreen = ({navigation}) => {
@@ -10,7 +11,8 @@ const MatchedScreen = ({navigation}) => {
         style={{ flex: 1 }}
         source={require("../../assets/match.png")}
       >
-          <View style ={{marginTop:"50%"}}> // you can add buttons here
+          <View style ={{marginTop:"50%"}}>
+          <CustomButton text="Send a Message"  key={matchDetails.id} onPress={() => navigation.navigate("MessageScreen", {matchedUser: matchDetails})}/>
           </View>
         </ImageBackground>
     </View>
