@@ -13,8 +13,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  Button,
-  Pressable
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -32,18 +30,15 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import CustomButton from "../components/CustomButton";
 
 const db = getFirestore();
 
 
 const { width } = Dimensions.get("screen");
 
-
 const ExploreScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [places, setPlaces] = useState([]);
-  const [searchText, setSearchText] = useState();
 
   async function getLocations(){
     let locations = [];
@@ -73,17 +68,18 @@ const ExploreScreen = ({ navigation }) => {
     return (
       <View style={style.categoryContainer}>
         {categoryIcons.map((icon, index) => (
-          <Pressable key={index} style={style.iconContainer} onPress={() => {navigation.navigate("QueryScreen")}}>
+          <View key={index} style={style.iconContainer}>
             {icon}
-          </Pressable>
+          </View>
         ))}
       </View>
     );
   };
 
-
   const handleKeyPress = (e) => {
-    if(e.key == "Enter"){
+    var key = e.key;
+    console.log(key);
+    if(key == "enter"){
       navigation.navigate("QueryScreen");
       console.log("Enterrrr");
     }
@@ -191,13 +187,12 @@ const ExploreScreen = ({ navigation }) => {
             <Text style={style.headerTitle}>Explore the</Text>
             <Text style={style.headerTitle}>beautiful places</Text>
             <View style={style.inputContainer}>
-              <Icon style={{color: COLORS.primary}} name="search" size={28} onPress={() => {navigation.navigate("QueryScreen")}} />
+              <Icon style={{color: COLORS.primary}} name="search" size={28} />
               <TextInput
-                onChange={setSearchText}
-                value={searchText}
                 placeholder="Search place"
-                style={{ color: COLORS.dark}}
-              />              
+                style={{ color: COLORS.dark }}
+                onKeyPress={(e)=>{handleKeyPress(e)}}
+              />
             </View>
           </View>
         </View>
@@ -234,14 +229,6 @@ const style = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: COLORS.primary,
   },
-
-  text: {
-    fontSize: 18,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-  },
   headerTitle: {
     color: COLORS.white,
     fontWeight: "bold",
@@ -253,14 +240,14 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 10,
     position: "absolute",
-    top: 70,
+    top: 90,
     flexDirection: "row",
     paddingHorizontal: 20,
     alignItems: "center",
     elevation: 12,
   },
   categoryContainer: {
-    marginTop: 40,
+    marginTop: 60,
     marginHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
