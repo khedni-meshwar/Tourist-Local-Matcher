@@ -13,6 +13,7 @@ const MatchedScreen = ({navigation, route}) => {
       >
           <View style ={{marginTop:"50%"}}>
           <CustomButton text="Send a Message"  onPress={() => navigation.navigate("MessageScreen", route.params)}/>
+
           </View>
         </ImageBackground>
     </View>

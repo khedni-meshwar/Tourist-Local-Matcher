@@ -62,7 +62,7 @@ export default function MatchingScreen({ navigation }) {
       // console.log(doc.data());
       console.log(currentSignedInUserObject);
       if (
-        !currentSignedInUserObject.likes.includes(doc.id) && !currentSignedInUserObject.matches.includes(doc.id)
+        !currentSignedInUserObject.likes.includes(doc.id) && !currentSignedInUserObject.matches.includes(doc.id) && !currentSignedInUserObject.dislikes.includes(doc.id)
       )
         users.push({ id: doc.id, ...doc.data() });
     });
@@ -106,6 +106,7 @@ export default function MatchingScreen({ navigation }) {
           },
           { merge: true }
         );
+
         setMatchId(users[currentIndex].id);
         navigation.navigate("MatchedScreen", matchId);
       }
@@ -123,7 +124,7 @@ export default function MatchingScreen({ navigation }) {
     await querySnapshot.forEach((doc) => {
       setCurrentSignedInUser(doc.id);
     }); //
-    setDoc(
+    await setDoc(
       doc(db, "users", currentSignedInUser),
       {
         dislikes: arrayUnion(users[currentIndex].id),

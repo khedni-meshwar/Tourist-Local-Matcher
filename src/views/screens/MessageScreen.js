@@ -1,16 +1,31 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  getFirestore,
+  addDoc,
+  orderBy,
+  query,
+  onSnapshot,
+  where,
+} from "firebase/firestore";
 import COLORS from "../../consts/colors";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { async } from "@firebase/util";
 
-const auth = getAuth();
 
+const auth = getAuth();
 const db = getFirestore();
 const chatsRef = collection(db, "chats");
+
 
 const MessageScreen = ({ route, navigation}) => {
 
@@ -44,12 +59,22 @@ const MessageScreen = ({ route, navigation}) => {
         },
       },
     ]);
+
   }, []);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
+  const onSend = useCallback(async (messages = []) => {
+    setMessages(
+      async (previousMessages) =>
+        await GiftedChat.append(previousMessages, messages)
     );
+    const { _id, createdAt, text, user } = messages[0];
+    await addDoc(collection(db, "chats"), {
+      _id,
+      createdAt,
+      text,
+      user,
+      convo: concUsers,
+    });
   }, []);
 
   const renderSend = (props) => {
@@ -58,24 +83,27 @@ const MessageScreen = ({ route, navigation}) => {
         <View>
           <MaterialCommunityIcons
             name="send-circle"
-            style={{marginBottom: 5, marginRight: 5}}
+            style={{ marginBottom: 5, marginRight: 5 }}
             size={32}
-            color= {COLORS.primary}
+            color={COLORS.primary}
           />
         </View>
       </Send>
     );
   };
   return (
-
     <GiftedChat
       messages={messages}
       onSend={(messages) => onSend(messages)}
       renderUsernameOnMessage={true}
       renderSend={renderSend}
-      onPressAvatar={() => navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}
+      onPressAvatar={() =>
+        navigation.navigate("UserProfileScreen", { matchedUser: matchedUser })
+      }
       user={{
-        _id: 1,
+        _id: user.id, // add real userid, name, and avatar here
+        name: user.firstName + " " + user.lastName,
+        avatar: user.image,
       }}
       renderBubble={(props) => {
         return (
@@ -102,12 +130,12 @@ const MessageScreen = ({ route, navigation}) => {
       }}
     />
   );
-}
+};
 const styles = StyleSheet.create({
   header: {
     display: "flex",
     backgroundColor: COLORS.primary,
     width: "100%",
-  }
+  },
 });
 export default MessageScreen;
