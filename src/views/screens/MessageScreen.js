@@ -1,13 +1,19 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  getFirestore,
+  addDoc,
+  orderBy,
+  query,
+  onSnapshot,
+} from "firebase/firestore";
 import COLORS from "../../consts/colors";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const auth = getAuth();
-
 const db = getFirestore();
 const chatsRef = collection(db, "chats");
 
@@ -32,11 +38,42 @@ const MessageScreen = ({ route, navigation}) => {
     ]);
   }, []);
 
+  useEffect(() => {
+    const collectionRef = collection(db, "chats");
+    const q = query(collectionRef, orderBy("createdAt", "desc"));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      setMessages(
+        querySnapshot.docs.map((doc) => ({
+          _id: doc.data()._id,
+          createdAt: doc.data().createdAt.toDate(),
+          text: doc.data().text,
+          user: doc.data().user,
+        }))
+      );
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const onSend = useCallback((messages = []) => {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
+    const { _id, createdAt, text, user } = messages[0];
+    addDoc(collection(db, "chats"), {
+      _id,
+      createdAt,
+      text,
+      user,
+    });
   }, []);
+
+  // const onSend = useCallback((messages = []) => {
+  //   setMessages((previousMessages) =>
+  //     GiftedChat.append(previousMessages, messages)
+  //   );
+  // }, []);
 
   const renderSend = (props) => {
     return (
