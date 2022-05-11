@@ -158,6 +158,7 @@ export default function MatchingScreen({ navigation }) {
             (u, i) =>
               currentIndex === i && (
                 <Swipes
+                  navigation={navigation}
                   key={i}
                   ref={swipesRef}
                   currentIndex={currentIndex}

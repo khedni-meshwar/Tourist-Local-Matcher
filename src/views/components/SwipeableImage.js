@@ -2,13 +2,13 @@ import React from "react";
 import { View, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
-export default function SwipeableImage({ user, willLike, willPass }) {
-  const test = () => {
-    console.log("Workingggg");
+export default function SwipeableImage({ user, willLike, willPass, navigation }) {
+  const showUserProfile = () => {
+    navigation.navigate("UserProfileScreen", {matchedUser: user});
   };
   return (
     <View>
-      <TouchableOpacity onPress={test} activeOpacity={0.9}>
+      <TouchableOpacity onPress={showUserProfile} activeOpacity={0.9}>
         <Image source={{ uri: user.image }} style={styles.photo} />
         {willLike && (
           <View style={styles.likeBox}>
