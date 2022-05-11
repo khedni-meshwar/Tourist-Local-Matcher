@@ -60,9 +60,9 @@ export default function MatchingScreen({ navigation }) {
     querySnapshot.forEach((doc) => {
       // console.log(doc.data());
       console.log(currentSignedInUserObject);
-      // if (
-      //   !currentSignedInUserObject.likes.includes(doc.id) && !currentSignedInUserObject.matches.includes(doc.id) && !currentSignedInUserObject.dislikes.includes(doc.id)
-      // )
+      if (
+        !currentSignedInUserObject.likes.includes(`${doc.id}`) && !currentSignedInUserObject.dislikes.includes(`${doc.id}`)
+      )
         users.push({ id: doc.id, ...doc.data() });
     });
     setUsers(users);
