@@ -2,12 +2,12 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import COLORS from "../../consts/colors";
 
-const ChatRow = ({ matchDetails, navigation }) => {
+const ChatRow = ({ matchDetails, navigation, user }) => {
 
   return (
     <TouchableOpacity
       key={matchDetails.id}
-      onPress={() => navigation.navigate("MessageScreen", {matchedUser: matchDetails})}>
+      onPress={() => navigation.navigate("MessageScreen", {matchedUser: matchDetails, user:user})}>
       <View
         style={styles.container}
       >

@@ -1,4 +1,9 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -8,39 +13,54 @@ import {
   orderBy,
   query,
   onSnapshot,
+  where,
 } from "firebase/firestore";
 import COLORS from "../../consts/colors";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const auth = getAuth();
 const db = getFirestore();
 const chatsRef = collection(db, "chats");
 
-const MessageScreen = ({ route, navigation}) => {
-  const { matchedUser } = route.params;
-
+const MessageScreen = ({ route, navigation }) => {
+  const { matchedUser, user } = route.params;
+  const [concUsers, setConcUser] = useState(matchedUser.id+user.id);
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    console.log(matchedUser)
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: matchedUser.firstName + " " + matchedUser.lastName,
-          avatar: matchedUser.image,
-        },
-      },
-    ]);
+  useLayoutEffect(() => {
+    const collectionRef = collection(db, "chats");
+    const concUsers1 = matchedUser.id + user.id;
+    const concUsers2 = matchedUser.id + user.id;
+    const q = query(
+      collectionRef,
+      orderBy("createdAt", "desc"),
+      where("convo", "in", [concUsers1, concUsers2])
+    );
+
+    const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+      setMessages(
+        QuerySnapshot.docs.map((doc) => ({
+          _id: doc.data()._id,
+          createdAt: doc.data().createdAt.toDate(),
+          text: doc.data().text,
+          user: doc.data().user,
+        }))
+      );
+    });
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
     const collectionRef = collection(db, "chats");
-    const q = query(collectionRef, orderBy("createdAt", "desc"));
+    const concUsers1 = matchedUser.id + user.id;
+    const concUsers2 = user.id + matchedUser.id;
+    const q = query(
+      collectionRef,
+      orderBy("createdAt", "desc"),
+      where("convo", "in", [concUsers1, concUsers2])
+    );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       setMessages(
@@ -56,24 +76,20 @@ const MessageScreen = ({ route, navigation}) => {
     return () => unsubscribe();
   }, []);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
+  const onSend = useCallback(async (messages = []) => {
+    setMessages(
+      async (previousMessages) =>
+        await GiftedChat.append(previousMessages, messages)
     );
     const { _id, createdAt, text, user } = messages[0];
-    addDoc(collection(db, "chats"), {
+    await addDoc(collection(db, "chats"), {
       _id,
       createdAt,
       text,
       user,
+      convo: concUsers,
     });
   }, []);
-
-  // const onSend = useCallback((messages = []) => {
-  //   setMessages((previousMessages) =>
-  //     GiftedChat.append(previousMessages, messages)
-  //   );
-  // }, []);
 
   const renderSend = (props) => {
     return (
@@ -81,24 +97,27 @@ const MessageScreen = ({ route, navigation}) => {
         <View>
           <MaterialCommunityIcons
             name="send-circle"
-            style={{marginBottom: 5, marginRight: 5}}
+            style={{ marginBottom: 5, marginRight: 5 }}
             size={32}
-            color= {COLORS.primary}
+            color={COLORS.primary}
           />
         </View>
       </Send>
     );
   };
   return (
-
     <GiftedChat
       messages={messages}
       onSend={(messages) => onSend(messages)}
       renderUsernameOnMessage={true}
       renderSend={renderSend}
-      onPressAvatar={() => navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}
+      onPressAvatar={() =>
+        navigation.navigate("UserProfileScreen", { matchedUser: matchedUser })
+      }
       user={{
-        _id: 1,
+        _id: user.id, // add real userid, name, and avatar here
+        name: user.firstName + " " + user.lastName,
+        avatar: user.image,
       }}
       renderBubble={(props) => {
         return (
@@ -125,12 +144,12 @@ const MessageScreen = ({ route, navigation}) => {
       }}
     />
   );
-}
+};
 const styles = StyleSheet.create({
   header: {
     display: "flex",
     backgroundColor: COLORS.primary,
     width: "100%",
-  }
+  },
 });
 export default MessageScreen;

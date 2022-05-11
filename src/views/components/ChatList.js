@@ -15,7 +15,7 @@ import COLORS from "../../consts/colors";
 const auth = getAuth();
 const db = getFirestore();
 
-const ChatList = ({ matches, navigation }) => {
+const ChatList = ({ matches, navigation, user }) => {
   console.log(matches)
   return matches.length > 0 ? (
     <View>
@@ -26,7 +26,7 @@ const ChatList = ({ matches, navigation }) => {
       style={{height: "100%", width: "100%"}}
       data={matches}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <ChatRow matchDetails={item} navigation={navigation}/>}
+      renderItem={({ item }) => <ChatRow matchDetails={item} navigation={navigation} user={user}/>}
     />
     </View>
   ) : (

@@ -26,7 +26,7 @@ const ChatScreen = ({ navigation }) => {
       )
     );
     userSnapshot.forEach(async (doc) => {
-      await setUser(doc.id);
+      await setUser({id: doc.id, ...doc.data()});
     });
   }
 
@@ -37,7 +37,7 @@ const ChatScreen = ({ navigation }) => {
   async function fetchMatches() {
     let matches = [];
     const querySnapshot = await getDocs(
-      query(collection(db, "users"), where("matches", "array-contains", user))
+      query(collection(db, "users"), where("matches", "array-contains", user.id))
     );
     querySnapshot.forEach(async (doc) => {
       matches.push({ id: doc.id, ...doc.data() });
@@ -68,7 +68,7 @@ const ChatScreen = ({ navigation }) => {
 
   return (
     <View>
-      <ChatList matches={matches} navigation={navigation} />
+      <ChatList matches={matches} navigation={navigation} user={user}/>
     </View>
   );
 };
