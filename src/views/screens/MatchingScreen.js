@@ -30,6 +30,7 @@ export default function MatchingScreen({ navigation }) {
   const [currentSignedInUser, setCurrentSignedInUser] = useState(null);
   const [currentSignedInUserObject, setCurrentSignedInUserObject] =
     useState(null);
+  const [matchId, setMatchId] = useState("");
 
   const onPressHandler = () => {
     navigation.navigate("Screen_B");
@@ -105,14 +106,9 @@ export default function MatchingScreen({ navigation }) {
           },
           { merge: true }
         );
-        await setDoc(
-          doc(db, "users", users[currentIndex].id),
-          {
-            matches: arrayUnion(currentSignedInUser),
-          },
-          { merge: true }
-        );
-        navigation.navigate("MatchedScreen");
+
+        setMatchId(users[currentIndex].id);
+        navigation.navigate("MatchedScreen", matchId);
       }
     nextUser();
   }
