@@ -10,7 +10,7 @@ const MatchedScreen = ({navigation}) => {
         style={{ flex: 1 }}
         source={require("../../assets/match.png")}
       >
-          <View style ={{marginTop:"50%"}}> // you can add buttons here
+          <View style ={{marginTop:"50%"}}> 
           </View>
         </ImageBackground>
     </View>
