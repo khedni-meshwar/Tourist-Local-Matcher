@@ -34,7 +34,6 @@ export default function ProfileScreen({ navigation }) {
   const [currentSignedInUserObject, setCurrentSignedInUserObject] = useState(
     {}
   );
-
   const onPressHandler = () => {
     navigation.navigate("MatchingScreen");
   };
@@ -48,7 +47,6 @@ export default function ProfileScreen({ navigation }) {
     );
     userSnapshot.forEach(async (doc) => {
       await setCurrentSignedInUserObject({ id: doc.id, ...doc.data() });
-      console.log("DOB: " + currentSignedInUserObject.dob.toDate().getFullYear());
     });
   }
 
@@ -111,7 +109,7 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>{new Date().getFullYear()-(currentSignedInUserObject.dob && currentSignedInUserObject.dob.toDate().getFullYear())}</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>23</Text>
             <Text style={[styles.text, styles.subText]}>Age</Text>
           </View>
           <View
