@@ -4,7 +4,7 @@ import COLORS from "../../consts/colors";
 import CustomButton from '../components/CustomButton';
 
 
-const MatchedScreen = ({navigation}) => {
+const MatchedScreen = ({navigation, route}) => {
   return (
     <View style={{ flex: 1, opacity:0.89}}>
       <ImageBackground
@@ -12,7 +12,7 @@ const MatchedScreen = ({navigation}) => {
         source={require("../../assets/match.png")}
       >
           <View style ={{marginTop:"50%"}}>
-          <CustomButton text="Send a Message"  key={matchDetails.id} onPress={() => navigation.navigate("MessageScreen", {matchedUser: matchDetails})}/>
+          <CustomButton text="Send a Message"  onPress={() => navigation.navigate("MessageScreen", route.params)}/>
           </View>
         </ImageBackground>
     </View>

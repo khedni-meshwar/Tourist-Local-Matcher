@@ -5,6 +5,7 @@ import { collection, getFirestore } from "firebase/firestore";
 import COLORS from "../../consts/colors";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { async } from "@firebase/util";
 
 const auth = getAuth();
 
@@ -12,12 +13,25 @@ const db = getFirestore();
 const chatsRef = collection(db, "chats");
 
 const MessageScreen = ({ route, navigation}) => {
-  const { matchedUser } = route.params;
+
+  const [matchedUser, setMatchedUser] = useState();
+
+  async function fetchMainUser() {
+    const userSnapshot = await getDocs(
+      query(
+        collection(db, "users"),
+        where("authId", "==", route.params)
+      )
+    );
+    userSnapshot.forEach(async (doc) => {
+      await setMatchedUser({ id: doc.id, ...doc.data() });
+    });
+  }
 
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    console.log(matchedUser)
+  useEffect(async() => {
+    await fetchMainUser();
     setMessages([
       {
         _id: 1,

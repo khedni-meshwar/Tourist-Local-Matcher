@@ -111,7 +111,7 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>{new Date().getFullYear()-currentSignedInUserObject.dob.toDate().getFullYear()}</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>{new Date().getFullYear()-(currentSignedInUserObject.dob && currentSignedInUserObject.dob.toDate().getFullYear())}</Text>
             <Text style={[styles.text, styles.subText]}>Age</Text>
           </View>
           <View
