@@ -397,7 +397,7 @@ const CreateProfileScreen = ({ navigation }) => {
 
         <View style={styles.root}>
           <View style={{ flex: 4, width: "100%" }}>
-            <Text style={styles.headerTitle}>Customize your Profile</Text>
+            <Text style={[styles.headerTitle, {marginBottom: 30}]}>Customize your Profile</Text>
             <Text style={[styles.subtitle, { marginBottom: 30 }]}>
               Help others know more about you by adding a profile picture. You
               can always skip and come back later.
@@ -406,9 +406,10 @@ const CreateProfileScreen = ({ navigation }) => {
               style={{ alignItems: "center" }}
               onPress={pickImage}
             >
-              <Image style={styles.imageContainer} source={{ uri: imgURI }} />
+              <Image style={[styles.imageContainer, {borderColor: COLORS.primary}]} source={{ uri: imgURI }} />
             </TouchableOpacity>
           </View>
+          <View style={{marginBottom: 250, minHeight:50}} ></View>
           <CustomButton text="Next" onPress={goToNextSlide} />
         </View>
 
