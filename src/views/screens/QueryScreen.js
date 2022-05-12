@@ -36,13 +36,18 @@ const db = getFirestore();
 
 const { width, height } = Dimensions.get("screen");
 
-const QueryScreen = ({ navigation }) => {
+const QueryScreen = ({ route, navigation }) => {
+  const {queryterm} = route.params;
   const [loading, setLoading] = useState(true);
   const [places, setPlaces] = useState([]);
 
-  async function getLocations(){
+  async function getLocations(queryterm){
     let locations = [];
-    const q = query(collection(db, "locations"));
+    console.log(queryterm);
+    const q = query(
+      collection(db, "locations"),
+      where("tags", "array-contains", queryterm)
+    );
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -55,7 +60,7 @@ const QueryScreen = ({ navigation }) => {
   
 
   useEffect(() => {
-    getLocations();
+    getLocations(queryterm);
   }, []); 
 
 

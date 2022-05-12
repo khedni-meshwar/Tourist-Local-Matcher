@@ -43,7 +43,8 @@ const { width } = Dimensions.get("screen");
 const ExploreScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [places, setPlaces] = useState([]);
-  const [searchText, setSearchText] = useState();
+  const [searchText, setSearchText] = useState("");
+  let queryterm = "";
 
   async function getLocations(){
     let locations = [];
@@ -69,25 +70,18 @@ const ExploreScreen = ({ navigation }) => {
     <FontAwesome name="cutlery" size={25} color={COLORS.primary} />,
     <FontAwesome name="glass" size={25} color={COLORS.primary} />,
   ];
+  const categories = ["beach", "hiking", "dining", "party"]
   const ListCategories = () => {
     return (
       <View style={style.categoryContainer}>
         {categoryIcons.map((icon, index) => (
-          <Pressable key={index} style={style.iconContainer} onPress={() => {navigation.navigate("QueryScreen")}}>
+          <Pressable key={index} style={style.iconContainer} onPress={() => { navigation.navigate("QueryScreen", { queryterm: categories[index] });}}>
             {icon}
           </Pressable>
         ))}
       </View>
     );
   };
-
-
-  const handleKeyPress = (e) => {
-    if(e.key == "Enter"){
-      navigation.navigate("QueryScreen");
-      console.log("Enterrrr");
-    }
-  }
 
   const Card = ({ place }) => {
     return (
@@ -191,13 +185,23 @@ const ExploreScreen = ({ navigation }) => {
             <Text style={style.headerTitle}>Explore the</Text>
             <Text style={style.headerTitle}>beautiful places</Text>
             <View style={style.inputContainer}>
-              <Icon style={{color: COLORS.primary}} name="search" size={28} onPress={() => {navigation.navigate("QueryScreen")}} />
+              <Icon
+                style={{ color: COLORS.primary }}
+                name="search"
+                size={28}
+                onPress={() => {
+                  queryterm = searchText;
+                  navigation.navigate("QueryScreen", {
+                    queryterm: searchText,
+                  });
+                }}
+              />
               <TextInput
-                onChange={setSearchText}
+                onChangeText={(newText) => setSearchText(newText)}
                 value={searchText}
                 placeholder="Search place"
-                style={{ color: COLORS.dark}}
-              />              
+                style={{ color: COLORS.dark }}
+              />
             </View>
           </View>
         </View>
