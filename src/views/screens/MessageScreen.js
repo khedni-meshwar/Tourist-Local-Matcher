@@ -16,15 +16,16 @@ import {
   where,
 } from "firebase/firestore";
 import COLORS from "../../consts/colors";
-import { StyleSheet, View, Text, ScrollView, Pressable, Image } from "react-native";
+import { StyleSheet, View, Text, ScrollView, Pressable, Image, TouchableOpacity } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const auth = getAuth();
 const db = getFirestore();
 const chatsRef = collection(db, "chats");
 
 const MessageScreen = ({ route, navigation }) => {
-  const { matchedUser, user } = route.params;
+  const { user, matchedUser } = route.params;
   const [concUsers, setConcUser] = useState(matchedUser.id+user.id);
   const [messages, setMessages] = useState([]);
 
@@ -107,10 +108,17 @@ const MessageScreen = ({ route, navigation }) => {
   };
   return (
     <>
-    <Pressable style={styles.actionBar} onPress={() => {navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}}>
-      <Image source={matchedUser.image} />
-      <Text style={styles.userName}>{matchedUser.firstName + " " + matchedUser.lastName}</Text>
-    </Pressable>
+      <>
+      <Pressable style={[styles.actionBar]} onPress={() => {navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}}>
+        <Image source={matchedUser.image} />
+        <Text style={styles.userName}>{matchedUser.firstName + " " + matchedUser.lastName}</Text>
+      </Pressable>
+      {/* <TouchableOpacity style={{backgroundColor: COLORS.primary}}>
+        <View>
+        <Icon name="chevron-back" size={30} style={{top: -55, color: COLORS.white}} onPress={()=>{navigation.navigate("MainScreen")}}/>
+        </View>
+      </TouchableOpacity> */}
+      </>
     
     <GiftedChat
       messages={messages}
