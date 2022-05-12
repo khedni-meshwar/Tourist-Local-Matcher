@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     alignItems: "center",
     borderRadius: 5,
+    bottom: -25
   },
 
   container_PRIMARY: {

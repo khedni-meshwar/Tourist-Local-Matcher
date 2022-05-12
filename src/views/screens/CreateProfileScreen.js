@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  FlatList
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import COLORS from "../../consts/colors";
@@ -411,7 +412,7 @@ const CreateProfileScreen = ({ navigation }) => {
               style={{ alignItems: "center" }}
               onPress={pickImage}
             >
-              <Image style={[styles.imageContainer, {borderColor: COLORS.primary}]} source={{ uri: imgURI }} />
+              <Image style={[styles.imageContainer]} source={{ uri: imgURI }} />
             </TouchableOpacity>
           </View>
           <View style={{marginBottom: 250, minHeight:50}} ></View>
@@ -445,8 +446,8 @@ const CreateProfileScreen = ({ navigation }) => {
           <CustomButton text="Next" onPress={goToNextSlide} />
         </View>
 
-        <View style={styles.root}>
-          <View style={{ flex: 4 }}>
+        <View style={[styles.root, {display:"flex"}]}>
+          <View style={{ flex: 4}}>
             <Text style={styles.headerTitle}>What are your interests?</Text>
             <Text style={[styles.subtitle, { marginBottom: 10 }]}>
               Choose between up to 5 interests for optimal recommendations.
@@ -455,6 +456,7 @@ const CreateProfileScreen = ({ navigation }) => {
           </View>
           <CustomButton text="Finish" onPress={createAccountObject} />
         </View>
+        
       </Carousel>
     </View>
   );
@@ -558,7 +560,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     borderWidth: 3,
-    borderColor: COLORS.light,
+    borderColor: COLORS.grey,
     width: 200,
     height: 200,
     borderRadius: 100,

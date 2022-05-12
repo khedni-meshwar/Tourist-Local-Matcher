@@ -144,7 +144,7 @@ export default function UserProfileScreen({ route, navigation }) {
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>23</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>{new Date().getFullYear() - (matchedUser.dob && matchedUser.dob.toDate().getFullYear())}</Text>
             <Text
               style={[
                 styles.text,
