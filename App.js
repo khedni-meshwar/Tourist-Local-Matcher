@@ -15,6 +15,7 @@ import UserProfileScreen from "./src/views/screens/UserProfileScreen";
 import QueryScreen from "./src/views/screens/QueryScreen";
 import { RootSiblingParent } from "react-native-root-siblings";
 import MatchedScreen from "./src/views/screens/MatchedScreen";
+import MatchingScreen from "./src/views/screens/MatchingScreen";
 
 LogBox.ignoreAllLogs();
 
@@ -44,6 +45,7 @@ const App = () => {
           <Stack.Screen name="UserProfileScreen" component={UserProfileScreen} />
           <Stack.Screen name="QueryScreen" component={QueryScreen} />
           <Stack.Screen name="MatchedScreen" component={MatchedScreen} />
+          <Stack.Screen name="MatchingScreen" component={MatchingScreen} />
 
         </Stack.Navigator>
       </NavigationContainer>

@@ -16,7 +16,7 @@ import {
   where,
 } from "firebase/firestore";
 import COLORS from "../../consts/colors";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView, Pressable, Image } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const auth = getAuth();
@@ -106,6 +106,12 @@ const MessageScreen = ({ route, navigation }) => {
     );
   };
   return (
+    <>
+    <Pressable style={styles.actionBar} onPress={() => {navigation.navigate("UserProfileScreen", {matchedUser: matchedUser})}}>
+      <Image source={matchedUser.image} />
+      <Text style={styles.userName}>{matchedUser.firstName + " " + matchedUser.lastName}</Text>
+    </Pressable>
+    
     <GiftedChat
       messages={messages}
       onSend={(messages) => onSend(messages)}
@@ -143,6 +149,7 @@ const MessageScreen = ({ route, navigation }) => {
         );
       }}
     />
+    </>
   );
 };
 const styles = StyleSheet.create({
@@ -151,5 +158,22 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     width: "100%",
   },
+  actionBar: {
+    backgroundColor: COLORS.primary,
+    height: 100,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userName: {
+    display: "flex",
+    flexDirection: "row",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: COLORS.white,
+    marginLeft: "10%",
+    marginTop: "5%"
+
+  }
 });
 export default MessageScreen;
