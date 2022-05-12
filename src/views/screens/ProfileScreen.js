@@ -8,7 +8,12 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
-} from "react-native";
+  FlatList,
+  style,
+  Dimensions,
+  TouchableOpacity,
+  ImageBackground,
+  } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, signOut } from "firebase/auth";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -26,14 +31,19 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import COLORS from "../../consts/colors";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const auth = getAuth();
 const db = getFirestore();
+
+const { width } = Dimensions.get("screen");
 
 export default function ProfileScreen({ navigation }) {
   const [currentSignedInUserObject, setCurrentSignedInUserObject] = useState(
     {}
   );
+  const [places, setPlaces] = useState(null);
+  const [favoritePlaces, setFavoritePlaces] = useState([]);
   const onPressHandler = () => {
     navigation.navigate("MatchingScreen");
   };
@@ -45,14 +55,36 @@ export default function ProfileScreen({ navigation }) {
         where("authId", "==", auth.currentUser.uid)
       )
     );
-    userSnapshot.forEach(async (doc) => {
+    await userSnapshot.forEach(async (doc) => {
       await setCurrentSignedInUserObject({ id: doc.id, ...doc.data() });
+      setFavoritePlaces(currentSignedInUserObject.favorites);
     });
+    await getLocations();
   }
 
   useEffect(async () => {
     await fetchMainUser();
   }, []);
+
+  useEffect(async () => {
+    await getLocations();
+  }, [favoritePlaces]);
+
+  async function getLocations() {
+    let locations = [];
+    const q = query(
+      collection(db, "locations"),
+      where("__name__", "in", currentSignedInUserObject.favorites)
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+      locations.push(doc.data());
+    });
+    setPlaces(locations);
+    console.log(locations);
+  }
 
   const clearLoginData = async () => {
     try {
@@ -72,6 +104,50 @@ export default function ProfileScreen({ navigation }) {
       });
     clearLoginData();
     navigation.navigate("LoginScreen");
+  };
+
+  const Card = ({ place }) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate("DetailsScreen", place)}
+      >
+        <ImageBackground
+          style={styles.cardImage}
+          source={{ uri: place.mainPhoto }}
+        >
+          <Text
+            style={{
+              color: COLORS.white,
+              fontSize: 20,
+              fontWeight: "bold",
+              marginTop: 10,
+            }}
+          >
+            {place.name}
+          </Text>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "space-between",
+              flexDirection: "row",
+              alignItems: "flex-end",
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <Icon name="place" size={20} color={COLORS.white} />
+              <Text style={{ marginLeft: 5, color: COLORS.white }}>
+                {place.location}
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <Icon name="star" size={20} color={COLORS.white} />
+              <Text style={{ marginLeft: 5, color: COLORS.white }}>5.0</Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -135,30 +211,15 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </View>
 
-        <View style={{ marginTop: 32 }}>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <View style={styles.mediaImageContainer}>
-              <Image
-                source={require("../../assets/images/media1.jpg")}
-                style={styles.image}
-                resizeMode="cover"
-              ></Image>
-            </View>
-            <View style={styles.mediaImageContainer}>
-              <Image
-                source={require("../../assets/images/media2.jpg")}
-                style={styles.image}
-                resizeMode="cover"
-              ></Image>
-            </View>
-            <View style={styles.mediaImageContainer}>
-              <Image
-                source={require("../../assets/images/media3.jpg")}
-                style={styles.image}
-                resizeMode="cover"
-              ></Image>
-            </View>
-          </ScrollView>
+        <View>
+          <Text style={styles.sectionTitle}>Favorite Places</Text>
+          <FlatList
+            contentContainerStyle={{ paddingLeft: 20 }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={places}
+            renderItem={({ item }) => <Card place={item} />}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -171,6 +232,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  image: {
+    flex: 1,
+    height: undefined,
+    width: undefined,
+  },
   text: {
     fontSize: 40,
     fontWeight: "bold",
@@ -182,11 +248,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
 
-  image: {
-    flex: 1,
-    height: undefined,
-    width: undefined,
-  },
   titleBar: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -258,6 +319,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginHorizontal: 10,
   },
+  cardImage: {
+    height: 220,
+    width: width / 2,
+    marginRight: 20,
+    padding: 10,
+    overflow: "hidden",
+    borderRadius: 10,
+  },
   mediaCount: {
     backgroundColor: "#41444B",
     position: "absolute",
@@ -273,6 +342,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     shadowRadius: 20,
     shadowOpacity: 1,
+  },
+  sectionTitle: {
+    marginHorizontal: 20,
+    marginVertical: 20,
+    fontWeight: "bold",
+    fontSize: 20,
   },
   recent: {
     marginLeft: 78,
