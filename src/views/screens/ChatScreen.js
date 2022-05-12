@@ -47,6 +47,7 @@ const ChatScreen = ({ navigation }) => {
     console.log("matches");
   }
   useEffect(()=>{fetchMatches()},[user]);
+  
 
   // useEffect(
   //   () =>

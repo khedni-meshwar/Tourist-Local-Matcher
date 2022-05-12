@@ -63,13 +63,13 @@ export default function MatchingScreen({ navigation }) {
       if (
         currentSignedInUserObject.likes !== null &&
         currentSignedInUserObject.dislikes !== null
-      )
+      ) {
         if (
           !currentSignedInUserObject.likes.includes(`${doc.id}`) &&
           !currentSignedInUserObject.dislikes.includes(`${doc.id}`)
         )
           users.push({ id: doc.id, ...doc.data() });
-        else users.push({ id: doc.id, ...doc.data() });
+      } else users.push({ id: doc.id, ...doc.data() });
     });
     setUsers(users);
   }
