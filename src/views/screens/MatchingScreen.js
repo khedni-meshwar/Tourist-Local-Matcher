@@ -60,10 +60,16 @@ export default function MatchingScreen({ navigation }) {
     querySnapshot.forEach((doc) => {
       // console.log(doc.data());
       console.log(currentSignedInUserObject);
-      if (currentSignedInUserObject.likes !== null && currentSignedInUserObject.dislikes !==null)
-        if(!currentSignedInUserObject.likes.includes(`${doc.id}`) && !currentSignedInUserObject.dislikes.includes(`${doc.id}`))
-      
-        users.push({ id: doc.id, ...doc.data() });
+      if (
+        currentSignedInUserObject.likes !== null &&
+        currentSignedInUserObject.dislikes !== null
+      )
+        if (
+          !currentSignedInUserObject.likes.includes(`${doc.id}`) &&
+          !currentSignedInUserObject.dislikes.includes(`${doc.id}`)
+        )
+          users.push({ id: doc.id, ...doc.data() });
+        else users.push({ id: doc.id, ...doc.data() });
     });
     setUsers(users);
   }
@@ -112,7 +118,10 @@ export default function MatchingScreen({ navigation }) {
           },
           { merge: true }
         );
-        navigation.navigate("MatchedScreen", {currentSignedInUser:currentSignedInUser, matchedUser: users[currentIndex]});
+        navigation.navigate("MatchedScreen", {
+          currentSignedInUser: currentSignedInUser,
+          matchedUser: users[currentIndex],
+        });
       }
     nextUser();
   }

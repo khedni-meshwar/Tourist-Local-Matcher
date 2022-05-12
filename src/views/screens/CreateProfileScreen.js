@@ -58,6 +58,7 @@ const CreateProfileScreen = ({ navigation }) => {
     handleCloudImageUpload();
 
     let account = {
+      authId:auth.currentUser.uid,
       firstName,
       lastName,
       dob,
@@ -66,6 +67,10 @@ const CreateProfileScreen = ({ navigation }) => {
       interests: interests.map((interest) => interest.name),
       countryCode,
       type,
+      favorites:[],
+      likes:[],
+      dislikes:[],
+      matches:[]
     };
 
     console.log(account);

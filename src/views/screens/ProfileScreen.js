@@ -64,7 +64,7 @@ export default function ProfileScreen({ navigation }) {
 
   useEffect(async () => {
     await fetchMainUser();
-  }, []);
+  }, [auth.currentUser.uid]);
 
   useEffect(async () => {
     await getLocations();
