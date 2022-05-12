@@ -11,11 +11,8 @@ const MatchedScreen = ({navigation, route}) => {
         style={{ flex: 1 }}
         source={require("../../assets/match.png")}
       >
-        <Pressable style={styles.button} onPress={()=>{navigation.navigate("MessageScreen", {matchedUser: matchedUser, user: currentSignedInUser})}}>
-          <Text style={styles.btnText}>Say Hi!</Text>
-        </Pressable>
 
-        <Pressable style={[styles.button, {marginTop: "5%"}]} onPress={()=>{navigation.navigate("MainScreen")}}>
+        <Pressable style={[styles.button, {marginTop: "125%"}]} onPress={()=>{navigation.navigate("MainScreen")}}>
           <Text style={styles.btnText}>Keep Matching</Text>
         </Pressable>
 
