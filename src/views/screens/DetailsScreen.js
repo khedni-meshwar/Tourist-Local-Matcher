@@ -10,18 +10,61 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../consts/colors";
+import {
+  doc,
+  addDoc,
+  collection,
+  Timestamp,
+  getFirestore,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  setDoc,
+  arrayUnion,
+} from "firebase/firestore";
+import { getAuth, signOut } from "firebase/auth";
+
+const db = getFirestore();
+const auth = getAuth();
 
 const DetailsScreen = ({ navigation, route }) => {
   const place = route.params;
   const [favPressed, setFavPressed] = useState(false);
+   const [currentSignedInUserObject, setCurrentSignedInUserObject] = useState(
+     {}
+   );
+  const handlePress = async () => {
+    console.log(place.id);
+    setFavPressed(true); 
 
-  const handlePress = () => {
-    setFavPressed(!favPressed);
+    await setDoc(
+      doc(db, "users", currentSignedInUserObject.id),
+      {
+        favorites: arrayUnion(place.id),
+      },
+      { merge: true }
+    );
   }
+
+    async function fetchMainUser() {
+      const userSnapshot = await getDocs(
+        query(
+          collection(db, "users"),
+          where("authId", "==", auth.currentUser.uid)
+        )
+      );
+      userSnapshot.forEach(async (doc) => {
+        await setCurrentSignedInUserObject({ id: doc.id, ...doc.data() });
+      });
+    }
+
+    useEffect(async () => {
+      await fetchMainUser();
+    }, []);
 
   useEffect(() => {
     console.log("FavPressed: " + favPressed);
-    console.log(place);
 
   }, [favPressed]);
   return (

@@ -53,10 +53,11 @@ const ExploreScreen = ({ navigation }) => {
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       console.log(doc.data());
-      locations.push(doc.data());
+      locations.push({id:doc.id, ...doc.data()});
 
     })
     setPlaces(locations);
+    console.log(locations);
   }
   
 
