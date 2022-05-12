@@ -34,10 +34,9 @@ const ChatRow = ({ matchDetails, navigation, user }) => {
             }}
           >
             <Text style={styles.initials}>{matchDetails.firstName + " " + matchDetails.lastName}</Text>
-            <Text style={styles.time}>{"time"}</Text>
+            
           </View>
           <View>
-            <Text style={styles.lastMsg}>{"lastMessage"}</Text>
           </View>
         </View>
       </View>

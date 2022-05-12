@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
   SafeAreaView,
@@ -6,12 +6,24 @@ import {
   StyleSheet,
   View,
   Text,
+  Pressable
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../consts/colors";
 
 const DetailsScreen = ({ navigation, route }) => {
   const place = route.params;
+  const [favPressed, setFavPressed] = useState(false);
+
+  const handlePress = () => {
+    setFavPressed(!favPressed);
+  }
+
+  useEffect(() => {
+    console.log("FavPressed: " + favPressed);
+    console.log(place);
+
+  }, [favPressed]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
@@ -48,9 +60,9 @@ const DetailsScreen = ({ navigation, route }) => {
         </View>
       </ImageBackground>
       <View style={style.detailsContainer}>
-        <View style={style.iconContainer}>
-          <Icon name="favorite" color={COLORS.red} size={30} />
-        </View>
+        <Pressable style={style.iconContainer} onPress={handlePress}>
+          <Icon name={favPressed? "favorite":"favorite-border"} color={favPressed? COLORS.red: "black"} size={30} />
+        </Pressable>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <Icon name="place" size={28} color={COLORS.primary} />
           <Text

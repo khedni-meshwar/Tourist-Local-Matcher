@@ -112,7 +112,7 @@ export default function MatchingScreen({ navigation }) {
           },
           { merge: true }
         );
-        navigation.navigate("MatchedScreen");
+        navigation.navigate("MatchedScreen", {currentSignedInUser:currentSignedInUser, matchedUser: users[currentIndex]});
       }
     nextUser();
   }
